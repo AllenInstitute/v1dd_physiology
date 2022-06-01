@@ -1,0 +1,258 @@
+{
+    "11": {
+        "session": "757426772",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "1",
+        "date": "20180924"
+    },
+    "12": {
+        "session": "757865337",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "2",
+        "date": "20180925"
+    },
+    "13": {
+        "session": "758034970",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "3",
+        "date": "20180925"
+    },
+    "14": {
+        "session": "758548901",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "4",
+        "date": "20180926"
+    },
+    "15": {
+        "session": "758708920",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "5",
+        "date": "20180926"
+    },
+    "21": {
+        "session": "759669843",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "1",
+        "date": "20181001"
+    },
+    "22": {
+        "session": "759720136",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "2",
+        "date": "20181001"
+    },
+    "23": {
+        "session": "759859612",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "3",
+        "date": "20181002"
+    },
+    "24": {
+        "session": "759897074",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "4",
+        "date": "20181002"
+    },
+    "25": {
+        "session": "760236258",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "5",
+        "date": "20181003"
+    },
+    "31": {
+        "session": "760654884",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "3",
+        "volume": "1",
+        "date": "20181004"
+    },
+    "32": {
+        "session": "763941416",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "3",
+        "volume": "2",
+        "date": "20181015"
+    },
+    "33": {
+        "session": "765200607",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "3",
+        "volume": "3",
+        "date": "20181018"
+    },
+    "34": {
+        "session": "765319660",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "3",
+        "volume": "4",
+        "date": "20181018"
+    },
+    "35": {
+        "session": "766591030",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "3",
+        "volume": "5",
+        "date": "20181022"
+    },
+    "41": {
+        "session": "761764952",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "4",
+        "volume": "1",
+        "date": "20181009"
+    },
+    "42": {
+        "session": "761795861",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "4",
+        "volume": "2",
+        "date": "20181009"
+    },
+    "43": {
+        "session": "764433303",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "4",
+        "volume": "3",
+        "date": "20181016"
+    },
+    "44": {
+        "session": "764492705",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "4",
+        "volume": "4",
+        "date": "20181016"
+    },
+    "45": {
+        "session": "765930981",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "4",
+        "volume": "5",
+        "date": "20181019"
+    },
+    "51": {
+        "session": "762708648",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "5",
+        "volume": "1",
+        "date": "20181011"
+    },
+    "52": {
+        "session": "762736891",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "5",
+        "volume": "2",
+        "date": "20181011"
+    },
+    "53": {
+        "session": "764675369",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "5",
+        "volume": "3",
+        "date": "20181017"
+    },
+    "54": {
+        "session": "764776573",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "5",
+        "volume": "4",
+        "date": "20181017"
+    },
+    "55": {
+        "session": "766053999",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "5",
+        "volume": "5",
+        "date": "20181019"
+    },
+    "16": {
+        "session": "776723588",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "6",
+        "depth": "500"
+    },
+    "17": {
+        "session": "777209156",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "7",
+        "depth": "525"
+    },
+    "18": {
+        "session": "780006408",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "8",
+        "depth": "550"
+    },
+    "19": {
+        "session": "779111527",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "9",
+        "depth": "575"
+    },
+    "1a": {
+        "session": "779136802",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "10",
+        "depth": "600"
+    },
+    "1b": {
+        "session": "778287244",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "11",
+        "depth": "625"
+    },
+    "1c": {
+        "session": "778327304",
+        "specimen": "703219414",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "12",
+        "depth": "650"
+    }   
+}

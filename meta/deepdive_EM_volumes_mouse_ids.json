@@ -1,0 +1,37 @@
+{
+    "slc1": {
+        "mouse_id": "393809",
+        "prod": "25",
+        "genotype": "Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94",
+        "gender": "male",
+        "date_of_birth": "20180412"
+    },
+    "slc2": {
+        "mouse_id": "409828",
+        "prod": "55",
+        "genotype": "Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94",
+        "gender": "male",
+        "date_of_birth": "20180703"
+    },
+    "teto1": {
+        "mouse_id": "416296",
+        "prod": "55",
+        "genotype": "TetO-GCaMP6s;Camk2a-tTA",
+        "gender": "female",
+        "date_of_birth": "20180806"
+    },
+    "slc4": {
+        "mouse_id": "438833",
+        "prod": "55",
+        "genotype": "Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94",
+        "gender": "male",
+        "date_of_birth": "20181201"
+    },
+    "slc5": {
+        "mouse_id": "427836",
+        "prod": "55",
+        "genotype": "Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94",
+        "gender": "female",
+        "date_of_birth": "20181008"
+    }
+}
