@@ -254,32 +254,32 @@
         "volume": "15",
         "depth": "725"
     },
-    // "10noslm": {
-    //     "session": "829252454",
-    //     "specimen": "802402724",
-    //     "cre": "Slc17a7;Ai94",
-    //     "column": "2",
-    //     "volume": "10"
-    // },
-    // "10slm": {
-    //     "session": "829282320",
-    //     "specimen": "802402724",
-    //     "cre": "Slc17a7;Ai94",
-    //     "column": "2",
-    //     "volume": "11"
-    // },
-    // "16-old": {
-    //     "session": "835669174",
-    //     "specimen": "802402724",
-    //     "cre": "Slc17a7;Ai94",
-    //     "column": "1",
-    //     "volume": "6"
-    // },
-    // "400": {
-    //     "session": "841939662",
-    //     "specimen": "802402724",
-    //     "cre": "Slc17a7;Ai94",
-    //     "column": "1",
-    //     "volume": "400"
-    // }
+    "10noslm": {
+        "session": "829252454",
+        "specimen": "802402724",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "10"
+    },
+    "10slm": {
+        "session": "829282320",
+        "specimen": "802402724",
+        "cre": "Slc17a7;Ai94",
+        "column": "2",
+        "volume": "11"
+    },
+    "16-old": {
+        "session": "835669174",
+        "specimen": "802402724",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "6"
+    },
+    "400": {
+        "session": "841939662",
+        "specimen": "802402724",
+        "cre": "Slc17a7;Ai94",
+        "column": "1",
+        "volume": "400"
+    }
 }
