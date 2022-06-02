@@ -1,0 +1,226 @@
+{
+    "11": {
+        "session": "780395212",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "1"
+    },
+    "12": {
+        "session": "792478925",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "2"
+    },
+    "13": {
+        "session": "792575581",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "3"
+    },
+    "14": {
+        "session": "793084753",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "4"
+    },
+    "15": {
+        "session": "793231231",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "5"
+    },
+    "21": {
+        "session": "773684387",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "2",
+        "volume": "1"
+    },
+    "22": {
+        "session": "779617029",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "2",
+        "volume": "2"
+    },
+    "23": {
+        "session": "779801159",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "2",
+        "volume": "3"
+    },
+    "24": {
+        "session": "787921254",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "2",
+        "volume": "4"
+    },
+    "25": {
+        "session": "788100166",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "2",
+        "volume": "5"
+    },
+    "31": {
+        "session": "774116840",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "3",
+        "volume": "1"
+    },
+    "32": {
+        "session": "774232837",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "3",
+        "volume": "2"
+    },
+    "33": {
+        "session": "781792809",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "3",
+        "volume": "3"
+    },
+    "34": {
+        "session": "782021403",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "3",
+        "volume": "4"
+    },
+    "35": {
+        "session": "789078055",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "3",
+        "volume": "5"
+    },
+    "41": {
+        "session": "780553431",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "4",
+        "volume": "1"
+    },
+    "42": {
+        "session": "789166195",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "4",
+        "volume": "2"
+    },
+    "43": {
+        "session": "789892533",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "4",
+        "volume": "3"
+    },
+    "44": {
+        "session": "789984702",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "4",
+        "volume": "4"
+    },
+    "45": {
+        "session": "791837229",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "4",
+        "volume": "5"
+    },
+    "51": {
+        "session": "778882326",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "5",
+        "volume": "1"
+    },
+    "52": {
+        "session": "790397273",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "5",
+        "volume": "2"
+    },
+    "53": {
+        "session": "790524206",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "5",
+        "volume": "3"
+    },
+    "54": {
+        "session": "790871165",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "5",
+        "volume": "4"
+    },
+    "55": {
+        "session": "790913026",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "5",
+        "volume": "5"
+    },
+    "16": {
+        "session": "798866513",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "6",
+        "depth": "525"
+    },
+    "17": {
+        "session": "798823947",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "7",
+        "depth": "550"
+    },
+    "18": {
+        "session": "798821579",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "8",
+        "depth": "575"
+    },
+    "19": {
+        "session": "798819031",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "9",
+        "depth": "600"
+    },
+    "1a": {
+        "session": "798815878",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "10",
+        "depth": "625"
+    },
+    "1b": {
+        "session": "795039755",
+        "specimen": "746910231",
+        "cre": "TetO;Camk2a",
+        "column": "1",
+        "volume": "11",
+        "depth": "650"
+    }
+}
+
