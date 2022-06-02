@@ -41,7 +41,7 @@ def find_version(f_path):
     if version_match:
         return version_match.group(1)
     raise RuntimeError("Unable to find version string.")
-version = find_version(os.path.join(here, 'volume_imaging_2P_analysis', '__init__.py'))
+version = find_version(os.path.join(here, 'v1dd_physiology', '__init__.py'))
 
 setup(
     name='v1dd_physiology',
