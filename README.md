@@ -28,5 +28,5 @@ or
 ### Install Jupyter Notebook
 ```
 > conda install jupyter
-> python -m ipykernel install --user --name vi2a --display-name "Python3.8 (vi2a)"
+> python -m ipykernel install --user --name v1dd --display-name "Python3 (v1dd)"
 ```
