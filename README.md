@@ -27,6 +27,6 @@ or
   
 ### Install Jupyter Notebook
 ```
-> conda install jupyter
+> conda install jupyter jupyterlab
 > python -m ipykernel install --user --name v1dd --display-name "Python3 (v1dd)"
 ```
