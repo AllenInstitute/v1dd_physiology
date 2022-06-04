@@ -1,5 +1,6 @@
 import os
 import json
+import numpy as np
 import tifffile as tf
 import NeuroAnalysisTools.core.FileTools as ft
 
@@ -159,3 +160,48 @@ def get_vasmap(
     return vasmap_wf, vasmap_2p
 
 
+def analyze_lsn_movie(mov, grid_size=9.3):
+    """
+    give the locally sparse noise movie for displaying,
+    return, at each location of either sign, the frame indices
+    that the probe is on. assuming the center of the frame is (0, 0)
+    (altitude, azimuth), top: higher altitude, left: lower azimuth
+    :param mov: 3d array, movie of sparse noise. each
+                probe, is one pixel
+    :param grid_size: float, grid size in degrees
+    :return probe_list: list, each element represents a probe
+                        at a give location and sign. This element
+                        is a list it self:
+                        (altitude,
+                         azimuth,
+                         sign,
+                         list of frame indices that the probe is on)
+
+    """
+
+    azis = (np.arange(mov.shape[2]) - ((mov.shape[2] - 1) / 2)) * grid_size
+    alts = (np.arange(mov.shape[1]) - ((mov.shape[1] - 1) / 2)) * grid_size
+    alts = alts[::-1]
+
+    # print(alts)
+    # print(azis)
+
+    probe_list = []
+
+    for i in range(mov.shape[1]):
+        for j in range(mov.shape[2]):
+
+            azi = azis[j]
+            alt = alts[i]
+
+            pix = mov[:, i, j]
+
+            on = np.where(pix == 1)
+            probe_list.append([alt, azi, 1, list(on[0])])
+
+            off = np.where(pix == -1)
+            probe_list.append([alt, azi, -1, list(off[0])])
+
+            # print(probe_list)
+
+    return probe_list
