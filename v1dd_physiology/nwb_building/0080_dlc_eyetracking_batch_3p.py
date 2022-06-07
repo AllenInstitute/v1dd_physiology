@@ -56,9 +56,10 @@ path_config = r"\\allen\programs\braintv\workgroups\cortexmodels\peterl\visual_b
 mov_folder = r'\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\data\eye_tracking_movies\3p'
 mov_fns = os.listdir(mov_folder)
 mov_fns = [f for f in mov_fns if f[-4:] == '.avi']
+# mov_fns = [f for f in mov_fns if (f[-4:] == '.avi') and ('M438833_1b' in f)]
 mov_paths = [os.path.join(mov_folder, fn) for fn in mov_fns]
 print('number of movies: {}'.format(len(mov_paths)))
 print('\n'.join(mov_paths))
 
-deeplabcut.analyze_videos(path_config,mov_paths)  #can accept list of video files
+# deeplabcut.analyze_videos(path_config,mov_paths)  #can accept list of video files
 deeplabcut.create_labeled_video(path_config,mov_paths) #can accept list of video files

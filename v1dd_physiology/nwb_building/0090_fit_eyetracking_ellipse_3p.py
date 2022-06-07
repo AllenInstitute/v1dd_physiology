@@ -6,7 +6,8 @@ import NeuroAnalysisTools.PreprocessPipeline as pp
 import NeuroAnalysisTools.core.FileTools as ft
 import NeuroAnalysisTools.DeepLabCutTools as dlct
 
-data_folder = r'\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\data\eye_tracking_movies\3p'
+data_folder = r'\\allen\programs\mindscope\workgroups\surround' \
+              r'\v1dd_in_vivo_new_segmentation\data\eye_tracking_movies\3p'
 et_side = 'right'
 et_confidence_thr = 0.7
 et_point_num_thr = 11
@@ -15,15 +16,17 @@ et_is_generate_labeled_movie = True
 et_diagonal_length = 9.0
 et_nasal_dir = 'right'
 
-curr_folder = os.path.dirname(os.path.join(__file__))
+curr_folder = os.path.dirname(os.path.abspath(__file__))
 os.chdir(curr_folder)
 
-dlc_result_paths = ft.look_for_file_list(source=data_folder,
-                                         identifiers=['DLC_resnet50_universal_eye_tracking'],
-                                         file_type='h5',
-                                         is_full_path=True)
+dlc_result_paths = ft.look_for_file_list(
+    source=data_folder,
+    identifiers=['DLC_resnet50_universal_eye_tracking', 'M438833_1b'],
+    # identifiers=['DLC_resnet50_universal_eye_tracking'],
+    file_type='h5',
+    is_full_path=True)
 dlc_result_paths.sort()
-# print('\n'.join(dlc_result_paths))
+print('\n'.join(dlc_result_paths))
 
 for dlcr_i, dlcr_p in enumerate(dlc_result_paths):
 
