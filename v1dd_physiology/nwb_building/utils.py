@@ -13,7 +13,7 @@ def get_meta_mouse(mouse_id):
 
     path = os.path.join(
         script_folder, 
-        'meta_lims_old', 
+        'meta_lims', 
         'deepdive_EM_volumes_mouse_ids.json'
         )
     with open(path, 'r') as f:
@@ -39,11 +39,11 @@ def get_all_sessions(mouse_id):
     the input mouse_id (six digit string)
     """
 
-    json_folder = os.path.join(script_folder, 'meta_lims_old')
+    json_folder = os.path.join(script_folder, 'meta_lims')
 
     json_path = ft.look_for_unique_file(
         source=json_folder, 
-        identifiers=[mouse_id], 
+        identifiers=['deepdive_EM_volumes', mouse_id], 
         file_type='json', 
         print_prefix='', 
         is_full_path=True,
