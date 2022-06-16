@@ -3,12 +3,28 @@ import h5py
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
-def get_projection_images(nwb_path, plane_n, is_plot=False):
+def get_projection_images(nwb_f, plane_n, is_plot=False):
     """
     return mean projection and max projection of a given imaging plane
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+    plane_n : string
+        "plane0", "plane1", ...
+    is_plot : bool
+
+    Returns
+    -------
+    mean_proj : 2d array
+        mean projection 
+    max_proj : 2d array
+        max projection
     """
 
-    nwb_f = h5py.File(nwb_path, 'r')
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
 
     mean_proj = nwb_f['/processing/rois_and_traces_{}/ImageSegmentation' \
                       '/imaging_plane/reference_images/mean_projection' \
@@ -47,19 +63,29 @@ def get_projection_images(nwb_path, plane_n, is_plot=False):
     return mean_proj, max_proj
 
 
-def get_vasculature_map(nwb_path,  type='wf', is_standard='False'):
+def get_vasculature_map(nwb_f,  type='wf', is_standard='False'):
     """
     get vasculature map of a particular session
 
-    :param nwb_f: hdf5 File object
-    :param type: str, 'wf' for wide field or '2p' for 2p photon
-    :param is_standard: bool, if False, original image acquired;
-                              if True, rotated to match standard orientation
-                                       up: anterior, left: lateral
-    :return vasmap: 2d array
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+    type : str, 
+        'wf' for wide field or '2p' for 2p photon
+    is_standard : bool
+        if False, original image acquired;
+        if True, rotated to match standard orientation 
+        (up: anterior, left: lateral).
+    
+    Returns
+    ------- 
+    vasmap: 2d array
+        vasculature_map
     """
 
-    nwb_f = h5py.File(nwb_path, 'r')
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
 
     vasmap_path = f'acquisition/images/vasmap_{type}'
 
@@ -73,22 +99,65 @@ def get_vasculature_map(nwb_path,  type='wf', is_standard='False'):
     return vasmap
 
 
-def get_windowed_grating_location(nwb_path):
+def get_session_id(nwb_f):
+    """
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    sess_id : str
+        LIMS ophys session id, unquie to every nwb file
+    """
+    return nwb_f['general/session_id'][()]
+
+
+def get_windowed_grating_location(nwb_f):
     """
     return altitude and azimuth location of the center of windowed gratings
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    alt : float
+        altitude of the windowed drifting grating circle in degrees
+    azi : float
+        azimuth of the windowed drifting grating circle in degrees
     """
-    nwb_f = h5py.File(nwb_path, 'r')
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
     alt = nwb_f['stimulus/presentation/drifting_gratings_windowed/center_alt'][()]
     azi = nwb_f['stimulus/presentation/drifting_gratings_windowed/center_azi'][()]
     nwb_f.close()
     return alt, azi
 
 
-def get_windowed_grating_diameter(nwb_path):
+def get_windowed_grating_diameter(nwb_f):
     """
     return windowed drifting grating diameter in degrees 
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    dgcw_dia : float
+        diameter of the windowed drifing grating circle in degrees
     """
-    nwb_f = h5py.File(nwb_path, 'r')
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
     dgcw_dia = nwb_f['stimulus/presentation/drifting_gratings_windowed/diameter_deg'][()]
     nwb_f.close()
     return dgcw_dia
