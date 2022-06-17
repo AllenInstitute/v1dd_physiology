@@ -517,8 +517,7 @@ def get_rois_and_traces(
     return plane_dict
 
 
-def add_rois_and_traces_to_nwb(nwb_f=nwb_f, plane_n=plane_n, 
-    plane_dict=plane_dict):
+def add_rois_and_traces_to_nwb(nwb_f, plane_n, plane_dict):
 
     pass
 
