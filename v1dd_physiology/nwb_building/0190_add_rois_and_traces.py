@@ -14,8 +14,6 @@ sess_dict = utils.get_all_experiments_pika_meta(nwb_fn[:10])
 
 # nwb_f = nt.RecordedFile(os.path.join(nwb_folder, fn))
 
-sess_dict = utils.get_all_experiments_pika_meta(fn[:10])
-
 for plane_n, plane_dict in sess_dict.items():
 
     rois_traces_dict = utils.get_rois_and_traces(
