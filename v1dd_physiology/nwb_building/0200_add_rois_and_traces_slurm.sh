@@ -26,8 +26,8 @@ nwb_list=("$search_dir"/M409828*.nwb)
 
 a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 
-python_path = "/home/junz/anaconda3/envs/analysis/bin/python"
-script_path = "/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/nwb_building/0190_add_rois_and_traces_slurm.py"
+python_path="/home/junz/anaconda3/envs/analysis/bin/python"
+script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/nwb_building/0190_add_rois_and_traces_slurm.py"
 echo "Run eyetracking ellipse fitting on multiple nodes"
 "$python_path" "$script_path" $a1
 
