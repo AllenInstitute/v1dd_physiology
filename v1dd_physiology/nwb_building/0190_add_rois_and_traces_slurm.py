@@ -11,10 +11,13 @@ print(f'data path: {nwb_folder}')
 print(f'adding rois and traces to {nwb_fn} ...')
 
 sess_dict = utils.get_all_experiments_pika_meta(nwb_fn[:10])
+print(sess_dict.keys())
 
 nwb_f = nt.RecordedFile(nwb_path)
 
 for plane_n, plane_dict in sess_dict.items():
+
+    print(f'\t{plane_n} ...')
 
     rois_traces_dict = utils.get_rois_and_traces(
         exp_id=plane_dict['experiment'],
