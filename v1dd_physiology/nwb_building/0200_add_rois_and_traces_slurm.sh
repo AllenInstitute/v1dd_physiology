@@ -18,7 +18,7 @@ pwd; hostname; date
 
 search_dir=/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/data/eye_tracking_movies/3p
 
-nwb_list=("$search_dir"/M409828*.nwb)
+nwb_list=("$search_dir"/M409828*)
 echo "${nwb_list[@]}"
 
 # nwb_list=("${nwb_list[@]:1:1}")
