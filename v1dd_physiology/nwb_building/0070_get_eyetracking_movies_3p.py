@@ -12,8 +12,8 @@ save_folder = r'\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_
 
 fns = ft.look_for_file_list(
     source=data_folder, 
-    # identifiers=[''],
-    identifiers=['M438833_1b'],
+    identifiers=[''],
+    # identifiers=['M438833_1b'],
     file_type='nwb',
     is_full_path=False
     )
@@ -68,7 +68,7 @@ for pair_i, pair in enumerate(pairs):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # frame_r = frame.transpose(1, 0, 2)[::-1, :, :]
         frame_r = frame.transpose()[::-1, :]
-        frame_r = cv2.equalizeHist(frame_r)
+        # frame_r = cv2.equalizeHist(frame_r)
 
         # f, axs = plt.subplots(nrows=1, ncols=2, figsize=(6, 3))
         # # axs[0].imshow(np.mean(frame, axis=2))

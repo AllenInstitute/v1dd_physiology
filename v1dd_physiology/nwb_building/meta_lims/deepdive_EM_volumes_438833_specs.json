@@ -262,21 +262,4 @@
         "column": "1",
         "volume": "13",
         "depth": "675"
-    },
-    "1e": {
-        "session": "868513502",
-        "specimen": "813345629",
-        "cre": "Slc17a7;Ai94",
-        "column": "1",
-        "volume": "6",
-        "depth": "450"
-    },
-    "1f": {
-        "session": "868513419",
-        "specimen": "813345629",
-        "cre": "Slc17a7;Ai94",
-        "column": "1",
-        "volume": "7",
-        "depth": "475"
-    }
 }

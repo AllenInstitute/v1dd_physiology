@@ -14,7 +14,7 @@ psr = pp.Preprocessor()
 
 meta_path = os.path.join(
     os.path.realpath(curr_folder), 
-    'meta_lims_old', 
+    'meta_lims', 
     'deepdive_EM_volumes_mouse_ids.json'
     )
 
