@@ -597,6 +597,8 @@ def add_rois_and_traces_to_nwb(nwb_f, plane_n, plane_dict,
     is_if.add_reference_image('imaging_plane', 'correlation_projection_denoised',
         plane_dict['projection_cor_denoised'])
     is_if.set_value('pipeline_roi_names', plane_dict['roi_id_list'])
+    is_if.set_value('img_height', 512)
+    is_if.set_value('img_width', 512)
     is_if.set_value('description', 'raw movie was denoised by deepinterpolation and then segmented by Suite2p, ' \
                                    'from Suite2p results, only binary roi masks were saved here.')
 

@@ -18,13 +18,13 @@ for plane_n, plane_dict in sess_dict.items():
 
     rois_traces_dict = utils.get_rois_and_traces(
         exp_id=plane_dict['experiment'],
-        # folder_noisy='/allen/programs/mindscope/workgroups/surround/motion_correction_labeling_2022',
-        # folder_denoised='/allen/programs/mindscope/workgroups/surround/denoising_labeling_2022/denoised_movies',
-        # folder_roi='/allen/programs/mindscope/workgroups/surround/denoising_labeling_2022/segmentations',
-        # folder_noisy_trace_raw='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/traces_2022',
-        # folder_noisy_trace_demixed='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/demix_2022',
-        # folder_noisy_trace_subtracted='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/neuropil_2022',
-        # folder_noisy_trace_dff='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/dff_2022',
+        folder_noisy='/allen/programs/mindscope/workgroups/surround/motion_correction_labeling_2022',
+        folder_denoised='/allen/programs/mindscope/workgroups/surround/denoising_labeling_2022/denoised_movies',
+        folder_roi='/allen/programs/mindscope/workgroups/surround/denoising_labeling_2022/segmentations',
+        folder_noisy_trace_raw='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/traces_2022',
+        folder_noisy_trace_demixed='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/demix_2022',
+        folder_noisy_trace_subtracted='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/neuropil_2022',
+        folder_noisy_trace_dff='/allen/programs/mindscope/workgroups/surround/trace_extraction_2022/dff_2022',
         )
 
     plane_dict.update(rois_traces_dict)
