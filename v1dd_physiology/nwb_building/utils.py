@@ -694,7 +694,7 @@ def add_rois_and_traces_to_nwb(nwb_f, plane_n, plane_dict,
     trace_dff_ts.set_value('num_samples', traces_noisy_dff.shape[1])
     trace_dff_ts.set_value('num_frame_small_baseline', plane_dict['dff_frame_num_small_baseline'])
     trace_dff_ts.set_value('sigma', plane_dict['dff_sigma'])
-    trace_dff_ts.add_timeseries(trace_dff_ts)
+    trace_dff_if.add_timeseries(trace_dff_ts)
     trace_dff_ts.finalize()
     trace_dff_if.finalize()
 
