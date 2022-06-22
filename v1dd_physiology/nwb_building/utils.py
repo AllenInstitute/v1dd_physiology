@@ -137,6 +137,21 @@ def pick_3p_sessions(sesses):
     return sesses_3p
 
 
+def pick_2p_sessions(sesses):
+    """
+    from the dictonary of all session pick the two-photon sessions.
+    """
+
+    sesses_2p = {}
+    for sess_n, sess in sesses.items():
+        if len(sess_n) == 2 and \
+        sess_n[1] in ['1', '2', '3', '4', '5']:
+            
+            sesses_2p.update({sess_n: sess})
+
+    return sesses_2p
+
+
 def get_lims_session_path(
     sess, prod, btv_path=r"\\allen\programs\braintv"
     ):

@@ -12,7 +12,7 @@ fns = ft.look_for_file_list(
     is_full_path=False
     )
 
-fns = [fn for fn in fns if fn[9] not in '12345']
+# fns = [fn for fn in fns if fn[9] not in '12345']
 fns.sort()
 print('\n'.join(fns))
 
