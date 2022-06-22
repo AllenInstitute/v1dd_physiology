@@ -18,7 +18,7 @@ pwd; hostname; date
 
 search_dir=/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/data/nwbs
 nwb_list=("$search_dir"/M409828*.nwb)
-echo "${nwb_list[@]}"
+# echo "${nwb_list[@]}"
 
 #nwb_list=("${nwb_list[@]:1:1}")
 #echo "${nwb_list[@]}"
@@ -28,6 +28,6 @@ a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 # module load python
 python_path="/allen/aibs/mat/Peter/pet-python-36/bin/python"
 script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/nwb_building/0210_event_detection_slurm.py"
-echo "Run v1dd event extraction on multiple cores"
+echo "Run v1dd event extraction on slurm"
 "$python_path" "$script_path"  $a1
 date

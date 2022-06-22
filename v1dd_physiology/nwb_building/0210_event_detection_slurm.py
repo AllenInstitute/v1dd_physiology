@@ -18,6 +18,8 @@ l0 = SourceFileLoader(
     '/allen/programs/braintv/workgroups'
     '/cortexmodels/peterl/forward_model/l0_analysis_deepscope.py').load_module()
 
+output_dir = '/allen/programs/mindscope/workgroups/surround/jun_testing/event_detection/event_output'
+
 curr_folder = os.path.dirname(os.path.realpath(__file__))
 os.chdir(curr_folder)
 
@@ -25,14 +27,12 @@ nwb_path = sys.argv[1]
 print(f'processing {nwb_path} ...')
 f = h5py.File(nwb_path, 'r')
 
-# example nwb_file
-nwb_path = '/allen/programs/mindscope/workgroups/surround' \
-           '/v1dd_in_vivo_new_segmentation/data/nwbs/M409828_1a_20180627.nwb'
+# # example nwb_file
+# nwb_path = '/allen/programs/mindscope/workgroups/surround' \
+#            '/v1dd_in_vivo_new_segmentation/data/nwbs/M409828_1a_20180627.nwb'
 
 nwb_folder, nwb_fn = os.path.split(os.path.abspath(nwb_path))
 
-output_prefix = os.path.splitext(nwb_fn)[0]
-output_dir = os.path.join(curr_folder, 'event_output')
 if not os.path.isdir(output_dir):
     os.makedirs(output_dir)
 
