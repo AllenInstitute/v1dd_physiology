@@ -23,6 +23,9 @@ output_dir = '/allen/programs/mindscope/workgroups/surround/jun_testing/event_de
 curr_folder = os.path.dirname(os.path.realpath(__file__))
 os.chdir(curr_folder)
 
+if not os.path.isdir(output_dir):
+    os.makedirs(output_dir)
+
 nwb_path = sys.argv[1]
 print(f'processing {nwb_path} ...')
 f = h5py.File(nwb_path, 'r')
@@ -33,8 +36,7 @@ f = h5py.File(nwb_path, 'r')
 
 nwb_folder, nwb_fn = os.path.split(os.path.abspath(nwb_path))
 
-if not os.path.isdir(output_dir):
-    os.makedirs(output_dir)
+output_prefix = os.path.splitext(nwb_fn)[0]
 
 #loop over all 6 planes. Upsample by a factor of 5 to get ~30Hz...
 plane_keys = [p for p in f['processing'].keys() if p.startswith('rois_and_traces_plane')]
