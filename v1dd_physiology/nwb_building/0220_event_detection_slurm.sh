@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -J v1dd_event    # Job name
 #SBATCH -N 1
-#SBATCH -c 33
+#SBATCH -c 35
 #SBATCH --mem=16gb                         # Job memory request (per node)
 #SBATCH --time=10:00:00                     # Time limit hrs:min:sec
-#SBATCH --array=0-33
+#SBATCH --array=0-35
 
 #SBATCH --partition braintv                 # Partition used for processing
 #SBATCH --mail-user=junz@alleninstitute.org # Where to send mail  

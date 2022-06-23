@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -J v1dd_event    # Job name
 #SBATCH -N 1   # number of nodes
-#SBATCH -c 33  # number of cores (per node?)
+#SBATCH -c 35  # number of cores (per node?)
 #SBATCH --mem=16gb                         # Job memory request (per node)
 #SBATCH --time=10:00:00                     # Time limit hrs:min:sec
-#SBATCH --array=0-32 # 0-32 
+#SBATCH --array=0-35 
 
 #SBATCH --partition braintv                 # Partition used for processing
 #SBATCH --mail-user=junz@alleninstitute.org # Where to send mail  
