@@ -6,7 +6,7 @@ import NeuroAnalysisTools.core.FileTools as ft
 nwb_folder = r"\\allen\programs\mindscope\workgroups\surround" \
              r"\v1dd_in_vivo_new_segmentation\data\nwbs"
 
-stim_grp_n = 'drifting_gratings_full'
+stim_grp_n = 'drifting_gratings_windowed'
 
 curr_folder = os.path.dirname(os.path.abspath(__file__))
 os.chdir(curr_folder)
@@ -18,7 +18,7 @@ fns = ft.look_for_file_list(
     is_full_path=False
     )
 
-fns = [fn for fn in fns if fn[9] not in '12345']
+# fns = [fn for fn in fns if fn[9] not in '12345']
 fns.sort()
 print('\n'.join(fns))
 
@@ -32,18 +32,28 @@ for fi, fn in enumerate(fns):
     stim_df = pd.DataFrame(data=nwb_f[f'stimulus/presentation/{stim_grp_n}/data'][()],
                            columns=['Start', 'End', 'TF', 'SF', 'Ori'])
 
+    dgc_alt = nwb_f[f'stimulus/presentation/{stim_grp_n}/center_alt'][()]
+    dgc_azi = nwb_f[f'stimulus/presentation/{stim_grp_n}/center_azi'][()]
+    dgc_rad = nwb_f[f'stimulus/presentation/{stim_grp_n}/diameter_deg'][()] / 2.
+
     dgc_ns = []
     for stim_i, stim_row in stim_df.iterrows():
         if np.isnan(stim_row['TF']): # blank trial
-            dgc_ns.append('alt0000.0_azi0000.0_sf0.00_tf00.0_dire000_con0.80_rad090')
+            dgc_ns.append(f'alt{dgc_alt:06.1f}'
+                          f'_azi{dgc_azi:06.1f}'
+                          f'_sf0.00'
+                          f'_tf00.0'
+                          f'_dire000'
+                          f'_con0.80'
+                          f'_rad{dgc_rad:03.0f}')
         else:
-            dgc_ns.append(f'alt0000.0'
-                          f'_azi0000.0'
+            dgc_ns.append(f'alt{dgc_alt:06.1f}'
+                          f'_azi{dgc_azi:06.1f}'
                           f'_sf{stim_row["SF"]:04.2f}'
                           f'_tf{stim_row["TF"]:04.1f}'
                           f'_dire{stim_row["Ori"]:03.0f}'
                           f'_con0.80'
-                          f'_rad090')
+                          f'_rad{dgc_rad:03.0f}')
 
     stim_df['dgc_n'] = dgc_ns
 

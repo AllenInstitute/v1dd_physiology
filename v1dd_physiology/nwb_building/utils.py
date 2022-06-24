@@ -81,6 +81,7 @@ def get_all_experiments_pika_meta(sess_n):
             {
             'experiment' : experiment_id, string,
             'depth': int, plane depth in microns
+            'date' : str, yyyymmdd
             }
         }
     """
@@ -116,7 +117,8 @@ def get_all_experiments_pika_meta(sess_n):
             if int(oe_parts[-1]) == depth:
                 sess_meta.update({f'plane{dep_i}': 
                                     {'experiment': exp_i,
-                                     'depth': depth}})
+                                     'depth': depth,
+                                     'date': oe_parts[0]}})
 
     return sess_meta
 
@@ -135,6 +137,21 @@ def pick_3p_sessions(sesses):
             sesses_3p.update({sess_n: sess})
 
     return sesses_3p
+
+
+def pick_2p_sessions(sesses):
+    """
+    from the dictonary of all session pick the two-photon sessions.
+    """
+
+    sesses_2p = {}
+    for sess_n, sess in sesses.items():
+        if len(sess_n) == 2 and \
+        sess_n[1] in ['1', '2', '3', '4', '5']:
+            
+            sesses_2p.update({sess_n: sess})
+
+    return sesses_2p
 
 
 def get_lims_session_path(

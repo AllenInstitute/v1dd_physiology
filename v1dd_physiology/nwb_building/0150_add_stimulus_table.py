@@ -10,7 +10,7 @@ nwb_folder = r"\\allen\programs\mindscope\workgroups\surround" \
              
 stim_table_p = r"\\allen\programs\mindscope\workgroups\surround" \
                r"\v1dd_in_vivo_new_segmentation\data\stimulus_tables" \
-               r"\3p_stim_table.hdf5"
+               r"\stim_table.hdf5"
 
 curr_folder = os.path.dirname(os.path.abspath(__file__))
 os.chdir(curr_folder)
@@ -24,7 +24,7 @@ fns = ft.look_for_file_list(
     is_full_path=False
     )
 
-fns = [fn for fn in fns if fn[9] not in '12345']
+# fns = [fn for fn in fns if fn[9] in '12345']
 fns.sort()
 print('\n'.join(fns))
 

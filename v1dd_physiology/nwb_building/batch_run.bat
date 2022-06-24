@@ -1,0 +1,15 @@
+call activate v1dd
+
+python 0000_generate_2p_nwbs.py
+python 0040_generate_3p_nwbs.py
+python 0045_remove_problematic_nwbs_3p.py
+python 0046_add_LIMS_session_id_all_nwbs.py
+python 0050_add_sync.py
+python 0060_add_vasmap.py
+python 0100_add_eyetracking.py
+python 0110_add_running.py
+python 0140_add_drifting_grating_location.py
+python 0150_add_stimulus_table.py
+python 0160_add_lsn_onset.py
+python 0170_add_dgc_onset_windowed.py
+python 0180_add_dgc_onset_full.py

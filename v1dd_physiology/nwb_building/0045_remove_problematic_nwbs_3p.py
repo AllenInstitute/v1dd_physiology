@@ -5,8 +5,8 @@ import NeuroAnalysisTools.core.FileTools as ft
 sess_to_move = [
     'M427836_1e', # no stimulus table
     'M427836_1f', # no stimulus table
-    'M438833_1e', # not the right depth
-    'M438833_1f', # not the right depth
+    # 'M438833_1e', # not the right depth
+    # 'M438833_1f', # not the right depth
 ]
 
 nwb_folder = r"\\allen\programs\mindscope\workgroups\surround" \
