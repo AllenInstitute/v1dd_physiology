@@ -6,7 +6,7 @@ import NeuroAnalysisTools.NwbTools as nt
 data_folder = r'\\allen\programs\mindscope\workgroups\surround' \
               r'\v1dd_in_vivo_new_segmentation\data\nwbs'
 eye_folder = r'\\allen\programs\mindscope\workgroups\surround' \
-             r'\v1dd_in_vivo_new_segmentation\data\eye_tracking_movies\3p'
+             r'\v1dd_in_vivo_new_segmentation\data\eye_tracking_movies'
 
 diagonal_length = 9.0 # mm
 side = 'right'
@@ -23,7 +23,7 @@ fns = ft.look_for_file_list(
     is_full_path=False
     )
 
-fns = [fn for fn in fns if fn[9] not in '12345']
+# fns = [fn for fn in fns if fn[9] not in '12345']
 fns.sort()
 print('\n'.join(fns))
 

@@ -13,7 +13,7 @@ import utils as utils
 
 st_path = r"\\allen\programs\mindscope\workgroups\surround" \
           r"\v1dd_in_vivo_new_segmentation\data\stimulus_tables" \
-          r"\3p_stim_table.hdf5"
+          r"\stim_table.hdf5"
 
 curr_folder = os.path.dirname(os.path.realpath(__file__))
 os.chdir(curr_folder)

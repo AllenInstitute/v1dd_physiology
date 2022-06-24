@@ -33,11 +33,11 @@ for mid in mouse_ids:
     prod = metam['prod']
 
     sesses = utils.get_all_sessions(metam['mouse_id'])
-    sesses_3p = utils.pick_3p_sessions(sesses)
+    sesses_2p = utils.pick_2p_sessions(sesses)
 
-    # print(sesses_3p)
+    print(sesses_2p)
 
-    for sn, smeta in sesses_3p.items():
+    for sn, smeta in sesses_2p.items():
         print(f'\tadding session: {sn} ...')
         
         lims_path = utils.get_lims_session_path(
@@ -47,13 +47,11 @@ for mid in mouse_ids:
             )
         print(f'\tsess path: {lims_path}')
 
-        lims_sessions = utils.get_all_experiments_pika_meta(f'M{metam["mouse_id"]}_{sn}')
-        date = lims_sessions['plane0']['date']
-
+        date = utils.get_session_date(lims_path)
         age = (datetime.date(int(date[0:4]), int(date[4:6]), int(date[6:8])) -
                datetime.date(int(dob[0:4]), int(dob[4:6]), int(dob[6:8]))).days
 
-        plane_depth = smeta['depth']
+        # plane_depth = smeta['depth']
 
         psr.generate_nwb_file(
             save_folder=data_folder,
@@ -66,9 +64,8 @@ for mid in mouse_ids:
             age=age,
             indicator='GCaMP6s',
             imaging_rate='6.6',
-            imaging_depth=plane_depth,
+            imaging_depth='multi',
             imaging_location='primary visual cortex',
             imaging_device='three-photon scope',
             imaging_excitation_lambda='1300 nm',
             is_date_back=True)
-

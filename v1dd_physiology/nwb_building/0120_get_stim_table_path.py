@@ -15,7 +15,7 @@ fns = ft.look_for_file_list(
     is_full_path=False
     )
 
-fns = [fn for fn in fns if fn[9] not in '12345']
+# fns = [fn for fn in fns if fn[9] not in '12345']
 fns.sort()
 print('\n'.join(fns))
 
@@ -38,4 +38,4 @@ paths_df = pd.DataFrame(data=paths, columns=['sess_name', 'sess_path'])
 print(paths_df)
 
 paths_df.to_csv(os.path.join(r'\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\data\stimulus_tables', 
-                             '3p_sess_paths.csv'))
+                             'sess_paths.csv'))
