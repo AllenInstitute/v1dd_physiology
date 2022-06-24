@@ -47,7 +47,9 @@ for mid in mouse_ids:
             )
         print(f'\tsess path: {lims_path}')
 
-        date = utils.get_session_date(lims_path)
+        lims_sessions = utils.get_all_experiments_pika_meta(f'M{metam["mouse_id"]}_{sn}')
+        date = lims_sessions['plane0']['date']
+
         age = (datetime.date(int(date[0:4]), int(date[4:6]), int(date[6:8])) -
                datetime.date(int(dob[0:4]), int(dob[4:6]), int(dob[6:8]))).days
 

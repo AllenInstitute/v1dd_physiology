@@ -81,6 +81,7 @@ def get_all_experiments_pika_meta(sess_n):
             {
             'experiment' : experiment_id, string,
             'depth': int, plane depth in microns
+            'date' : str, yyyymmdd
             }
         }
     """
@@ -116,7 +117,8 @@ def get_all_experiments_pika_meta(sess_n):
             if int(oe_parts[-1]) == depth:
                 sess_meta.update({f'plane{dep_i}': 
                                     {'experiment': exp_i,
-                                     'depth': depth}})
+                                     'depth': depth,
+                                     'date': oe_parts[0]}})
 
     return sess_meta
 
