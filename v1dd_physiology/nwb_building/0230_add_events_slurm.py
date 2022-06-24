@@ -59,7 +59,7 @@ for plane_i in range(plane_num):
         e_ts.set_description(
             'events detected by L0 event detection algorithm from DfOverF traces. '
             'Code by Peter Ledochowitsch.')
-        e_ts.set_time_as_link(f'processing/rois_and_traces_plane{plane_i}/DfOverF/dff_center')
+        e_ts.set_time_as_link(f'processing/rois_and_traces_plane{plane_i}/DfOverF/dff_raw')
         e_ts.set_value_as_link('segmentation_interface',
                                f'processing/rois_and_traces_plane{plane_i}/ImageSegmentation')
         e_ts.set_value_as_link('roi_names',

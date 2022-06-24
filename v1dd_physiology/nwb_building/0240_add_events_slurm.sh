@@ -2,7 +2,7 @@
 #SBATCH -J v1dd_event    # Job name
 #SBATCH -N 1
 #SBATCH -c 35
-#SBATCH --mem=64gb                         # Job memory request (per node)
+#SBATCH --mem=16gb                         # Job memory request (per node)
 #SBATCH --time=10:00:00                     # Time limit hrs:min:sec
 #SBATCH --array=0-35
 
