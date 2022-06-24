@@ -19,7 +19,6 @@ special dependency:
 or  
 
 ```
-> cd ..
 > git clone https://github.com/AllenInstitute/v1dd_physiology.git
 > cd v1dd_physiology
 > python setup.py install
