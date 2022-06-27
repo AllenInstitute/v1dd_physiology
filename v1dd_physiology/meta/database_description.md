@@ -70,4 +70,4 @@ these are not essential folders for the database.
 
  * **stimulus_tables**
     
-    This folder contains the intermediate data format conversion of displayed stimuli for each imaging session, which were saved in nwb files (path: '/stimulus/presentation').   
+    This folder contains the intermediate data format conversion of displayed stimuli for each imaging session, which were saved in nwb files (path: `/stimulus/presentation`).   
