@@ -66,6 +66,6 @@ for mid in mouse_ids:
             imaging_rate='6.6',
             imaging_depth='multi',
             imaging_location='primary visual cortex',
-            imaging_device='three-photon scope',
-            imaging_excitation_lambda='1300 nm',
+            imaging_device='two-photon scope',
+            imaging_excitation_lambda='940 nm',
             is_date_back=True)

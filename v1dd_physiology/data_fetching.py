@@ -1,7 +1,51 @@
-import h5py
+import os, h5py
+import NeuroAnalysisTools.core.FileTools as ft
 
+db_path = r"\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\data"
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
+
+def get_nwb_path(session_id, database_path=db_path):
+    """
+    Given session id, return the path to the corresponding nwb path
+
+    Parameters
+    ----------
+    session_id: string
+        M<mouse_id>_<column_id><volume_id>, e.g. 'M409828_11'
+    database_path: string
+        path to the database base folder
+
+    Returns
+    -------
+    nwb_path: string
+        path to the corresponding nwb file
+    """
+
+    nwb_path = ft.look_for_unique_file(
+        source=os.path.join(database_path, 'nwbs'),
+        identifiers=[session_id],
+        file_type='nwb',
+        is_full_path=True)
+
+    return nwb_path
+
+
+def get_scope_type(nwb_f):
+    """
+    if two-photon return "2p"
+    if three-photon return "3p"
+    """
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    if nwb_f['general/optophysiology/imaging_plane_0/device'][()] == 'two-photon scope':
+        return "2p"
+    elif nwb_f['general/optophysiology/imaging_plane_0/device'][()] == 'three-photon scope':
+        return "3p"
+    else:
+        raise LookupError("Do not understand imaging device.")
+
 
 def get_projection_images(nwb_f, plane_n, is_plot=False):
     """
@@ -106,11 +150,37 @@ def get_session_id(nwb_f):
     nwb_f : hdf5 File object
         should be in read-only mode
 
+
+    Returns
+    -------     
+    session_id: string
+        10-character session id 'M<mouse_id>_<column_id><volume_id>'.
+        for example: M409828_11
+
+
+    """
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    pass
+
+
+def get_lims_session_id(nwb_f):
+    """
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
     Returns
     -------
     sess_id : str
         LIMS ophys session id, unquie to every nwb file
     """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
     return nwb_f['general/session_id'][()]
 
 
