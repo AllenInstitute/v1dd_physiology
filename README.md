@@ -8,7 +8,7 @@ special dependency:
 ### Create environment
 ```
 > conda create -n v1dd python=3
-> conda activate v1dd ("source activate v1dd" for mac or linux)
+> conda activate v1dd
 ```
 
 ### Install volume_imaging_2P_analysis

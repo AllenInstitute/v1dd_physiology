@@ -1,11 +1,24 @@
 
 ## Data Structure
-In the base folder, there will be several sub-folders  
+The V1 deepdive "V1DD" database is organized into 
+
+ | name  | mouse_id | genotype                          |  
+ | ----- | -------- | --------------------------------- |  
+ | Slc2  | 409828   | Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94 |  
+ | Teto1 | 416296   | TetO-GCaMP6s;Camk2a-tTA           |  
+ | Slc4  | 438833   | Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94 |  
+ | Slc5  | 427836   | Slc17a7-IRES2-Cre;Camk2a-tTA;Ai94 |  
+
+
  
-#### Essential Folders
+#### Essential Subfolders
+ 
+ * **visual_area_maps**
+    This folder contains the 
+
  * **nwbs**
 
-    This is probably the most important folder of the database. It contains a list of .nwb files of all experiment sessions. Each nwb file contains the raw and first-order pre-processed the data of each imaging session, as well as the meta data of that particular session. The name convention is `M{mouseid}\_{column}{volume}\_{date}.nwb`. For example: `M409828\_11\_20181212.nwb` means this folder contains the imaging session of column 1, volume 1 from the mouse 409828, and it is recorded on Dec. 12th, 2018. 
+    This is probably the most important folder of the database. It contains a list of .nwb files of all experiment sessions. Each nwb file contains the raw and first-order pre-processed the data of each imaging session, as well as the meta data of that particular session. The name convention is `M{mouseid}_{column}{volume}_{date}.nwb`. For example: `M409828_11_20181212.nwb` means this file contains the imaging session of column 1, volume 1 from the mouse 409828, and it is recorded on Dec. 12th, 2018. 
 
     For each mouse, five columns were recorded, marked as 1, 2, 3, 4, and 5, in which column 1 is at the center and column 2-5 were tiled at the four corners of column 1. For the detailed location of columns for each mouse, see `base folder/visual_area_maps/v1dd_cortex_maps.pdf`. For each columns, five volumes (volume 1 through 5 from superficial to deep) were recorded by DeepScope two-photon scope. Each volume expands 96 um in depth and contains 6 simultaneously recorded imaging planes.
 
@@ -29,9 +42,9 @@ In the base folder, there will be several sub-folders
  
  * **stim_movies**
 
- * **visual_area_maps**
+ 
 
-#### Other Folders
+#### Other Subfolders
 these are not essential folders for the database.
 
  * **eye\_tracking\_movies**
