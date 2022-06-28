@@ -138,8 +138,6 @@ def get_vasculature_map(nwb_f,  type='wf', is_standard='False'):
 
     vasmap = nwb_f[vasmap_path][()]
 
-    nwb_f.close()
-
     return vasmap
 
 
@@ -207,7 +205,7 @@ def get_windowed_grating_location(nwb_f):
 
     alt = nwb_f['stimulus/presentation/drifting_gratings_windowed/center_alt'][()]
     azi = nwb_f['stimulus/presentation/drifting_gratings_windowed/center_azi'][()]
-    nwb_f.close()
+    
     return alt, azi
 
 
@@ -230,7 +228,7 @@ def get_windowed_grating_diameter(nwb_f):
         raise OSError('The nwb file should be opened in read-only mode.')
 
     dgcw_dia = nwb_f['stimulus/presentation/drifting_gratings_windowed/diameter_deg'][()]
-    nwb_f.close()
+
     return dgcw_dia
 
 
