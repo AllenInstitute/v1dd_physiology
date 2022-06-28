@@ -5,6 +5,31 @@ db_path = r"\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segm
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
+def get_all_sessions(database_path=db_path):
+    """
+    return all session ids in the database
+
+    Parameters
+    ----------
+    database_path: string
+        path to the database base folder
+
+    Returns
+    -------
+    sessions: list of strings
+        list of all session ids in the database
+    """
+
+    nwb_fns = ft.look_for_file_list(
+        source=os.path.join(database_path, 'nwbs'),
+        identifiers=[],
+        file_type='nwb',
+        is_full_path=False)
+    
+    sessions = [n[0:10] for n in nwb_fns]
+    return sessions
+
+
 def get_nwb_path(session_id, database_path=db_path):
     """
     Given session id, return the path to the corresponding nwb path
@@ -180,7 +205,7 @@ def get_lims_session_id(nwb_f):
     if nwb_f.mode != 'r':
         raise OSError('The nwb file should be opened in read-only mode.')
 
-    return nwb_f['general/session_id'][()]
+    return nwb_f['general/session_id'][()].decode()
 
 
 def get_windowed_grating_location(nwb_f):
@@ -231,6 +256,141 @@ def get_windowed_grating_diameter(nwb_f):
 
     return dgcw_dia
 
+
+def get_plane_names(nwb_f):
+    """
+    return plane names in a session 
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    plane_ns : list of string
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    plane_ns = [k[-6:] for k in nwb_f['processing'].keys() if k.startswith('rois_and_traces_plane')]
+    
+    return plane_ns
+
+
+def get_lims_experiment_id(nwb_f, plane_n):
+    """
+    get the LIMS experiment id for a imaging plane
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    Returns
+    -------
+    exp_id : str
+        LIMS experiment id for this imaging plane
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    exp_id = nwb_f[f'processing/rois_and_traces_{plane_n}'
+                   f'/experiment_id'][()].decode()
+
+    return exp_id
+
+
+def get_plane_depth(nwb_f, plane_n):
+    """
+    get the depth in microns for a imaging plane
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    Returns
+    -------
+    depth : int
+        micorns under pia
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+    
+    depth = nwb_f[f'processing/rois_and_traces_{plane_n}/imaging_depth_micron'][()]
+
+    return depth
+
+
+def get_roi_ns(nwb_f, plane_n):
+    """
+    get the roi names for a imaging plane
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    Returns
+    -------
+    roi_ns : list of string
+        roi counting should be continuous, with the last 4 digit as 
+        index, which can be used to retrieve saved traces.
+        ['roi_0000', 'roi_0001', ....]
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    roi_ns = nwb_f[f'processing/rois_and_traces_{plane_n}'
+                   f'/ImageSegmentation/imaging_plane/roi_list'][()]
+    roi_ns = [r.decode() for r in roi_ns]
+    roi_ns.sort()
+    
+    return roi_ns
+
+
+def get_pika_roi_ids(nwb_f, plane_n):
+    """
+    get the ori_ids from pika for a imaging plane
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    Returns
+    -------
+    roi_ids : list of string
+        the format is <session_id>_<roi_id>, for example:
+        ['795018590_0000', '795018590_0001', '795018590_0002', ...]
+        Note: roi counting may not be continuous
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+    
+    roi_grp = nwb_f[f'processing/rois_and_traces_{plane_n}/ImageSegmentation'
+                    f'/imaging_plane']
+    roi_ns = get_roi_ns(nwb_f=nwb_f, plane_n=plane_n)
+    roi_ids = [roi_grp[f'{r}/roi_description'][()].decode() for r in roi_ns]
+    return roi_ids
 
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
