@@ -1,4 +1,5 @@
 import os, h5py
+import numpy as np
 import NeuroAnalysisTools.core.FileTools as ft
 
 db_path = r"\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\data"
@@ -332,6 +333,43 @@ def get_plane_depth(nwb_f, plane_n):
     return depth
 
 
+def get_plane_projections(nwb_f, plane_n):
+    """
+    get the depth in microns for a imaging plane
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    Returns
+    -------
+    proj_raw_mean : 2d array
+    proj_raw_max : 2d array
+    proj_denoised_mean : 2d array
+    proj_denoised_max : 2d array
+    proj_denoised_corr : 2d array
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    img_grp = nwb_f[f'processing/rois_and_traces_{plane_n}/ImageSegmentation'
+                    f'/imaging_plane/reference_images']
+
+    proj_raw_mean = img_grp['mean_projection_raw/data'][()]
+    proj_raw_max = img_grp['max_projection_raw/data'][()]
+    proj_denoised_mean = img_grp['mean_projection_denoised/data'][()]
+    proj_denoised_max = img_grp['max_projection_denoised/data'][()]
+    proj_denoised_corr = img_grp['correlation_projection_denoised/data'][()]
+
+    return proj_raw_mean, proj_raw_max, proj_denoised_mean, \
+        proj_denoised_max, proj_denoised_corr
+
+
 def get_roi_ns(nwb_f, plane_n):
     """
     get the roi names for a imaging plane
@@ -392,6 +430,169 @@ def get_pika_roi_ids(nwb_f, plane_n):
     roi_ids = [roi_grp[f'{r}/roi_description'][()].decode() for r in roi_ns]
     return roi_ids
 
+
+def get_pika_roi_id(nwb_f, plane_n, roi_n):
+    """
+    get the pika roi id of an roi
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    roi_n : string
+        name of the roi, e.g. 'roi_0005'
+
+    Returns
+    -------
+    pika_roi_id : str
+        the format is <session_id>_<roi_id>, for example:
+        '795018590_0000'. Note: roi counting may not be continuous
+    """
+
+    roi_id = nwb_f[f'processing/rois_and_traces_{plane_n}/ImageSegmentation'
+                   f'/imaging_plane/{roi_n}/roi_description'][()].decode()
+    return roi_id
+
+
+def get_pika_classifier_score(nwb_f, plane_n, roi_n):
+    """
+    get the pika classifier score of an roi
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    roi_n : string
+        name of the roi, e.g. 'roi_0005'
+
+    Returns
+    -------
+    score : float
+        score should be in the range from 0 to 1. 
+        The larger the more likely for this roi to be a cell soma.
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    roi_ind = int(roi_n[-4:])
+    return nwb_f[f'analysis/roi_classification_pika/{plane_n}/score'][roi_ind]
+
+
+def get_roi_mask(nwb_f, plane_n, roi_n):
+    """
+    get the binary roi mask of an roi
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    roi_n : string
+        name of the roi, e.g. 'roi_0005'
+
+    Returns
+    -------
+    roi_mask : 2d array
+        binary mask of the roi
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    plane_grp = nwb_f[f'processing/rois_and_traces_{plane_n}/ImageSegmentation']
+
+    width = plane_grp['img_width'][()]
+    height = plane_grp['img_height'][()]
+
+    mask = np.zeros((height, width), dtype=np.uint8)
+    
+    roi_grp = plane_grp[f'imaging_plane/{roi_n}']
+    pixels = roi_grp['pix_mask'][()]
+    mask[pixels[1, :], pixels[0, :]] = 1
+
+    return mask
+
+
+def get_single_trace(nwb_f, plane_n, roi_n, trace_type):
+    """
+    get the activity trace for an roi.
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    roi_n : string
+        name of the roi, e.g. 'roi_0005'
+
+    trace_type : string
+        type of trace to be extracted. Should be one of the 
+        following:
+            'raw'
+            'demixed'
+            'neuropil'
+            'subtracted'
+            'dff'
+            'events'
+
+    Returns
+    -------
+    trace : 1d array
+        activity trace of specified tracetype
+    trace_ts : 1d array
+        timestamps for the activity trace in seconds, 
+        should be the same shape as trace
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    roi_ind = int(roi_n[-4:])
+
+    if trace_type == 'raw':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw']
+    elif trace_type == 'demixed':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw_demixed']
+    elif trace_type == 'neuropil':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw_neuropil']
+    elif trace_type == 'subtracted':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw_subtracted']
+    elif trace_type == 'dff':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/DfOverF/dff_raw']
+    elif trace_type == 'events':
+        trace_grp = nwb_f[f'processing/l0_events_{plane_n}' \
+                          f'/DfOverF/l0_events']
+    else:
+        raise LookupError(f'Do not understand "trace_type", should be '
+            f'one of the following ["raw", "demixed", "neuropil", "sutracted", '
+            f'"dff", "events"]. Got "{trace_type}".')
+
+    trace = trace_grp['data'][roi_ind, :]
+    trace_ts = trace_grp['timestamps'][()]
+
+    assert(trace.shape == trace_ts.shape)
+
+    return trace, trace_ts
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
