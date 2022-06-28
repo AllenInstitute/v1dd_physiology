@@ -39,9 +39,9 @@ def get_scope_type(nwb_f):
     if nwb_f.mode != 'r':
         raise OSError('The nwb file should be opened in read-only mode.')
 
-    if nwb_f['general/optophysiology/imaging_plane_0/device'][()] == 'two-photon scope':
+    if nwb_f['general/optophysiology/imaging_plane_0/device'][()] == b'two-photon scope':
         return "2p"
-    elif nwb_f['general/optophysiology/imaging_plane_0/device'][()] == 'three-photon scope':
+    elif nwb_f['general/optophysiology/imaging_plane_0/device'][()] == b'three-photon scope':
         return "3p"
     else:
         raise LookupError("Do not understand imaging device.")
@@ -116,7 +116,7 @@ def get_vasculature_map(nwb_f,  type='wf', is_standard='False'):
     nwb_f : hdf5 File object
         should be in read-only mode
     type : str, 
-        'wf' for wide field or '2p' for 2p photon
+        'wf' for wide field, 'mp' for multi-photon (2p or 3p)
     is_standard : bool
         if False, original image acquired;
         if True, rotated to match standard orientation 
@@ -162,7 +162,8 @@ def get_session_id(nwb_f):
     if nwb_f.mode != 'r':
         raise OSError('The nwb file should be opened in read-only mode.')
 
-    pass
+    nwb_fn = os.path.split(nwb_f.filename)[1]
+    return nwb_fn[0:10]
 
 
 def get_lims_session_id(nwb_f):
