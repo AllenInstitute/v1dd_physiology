@@ -32,7 +32,7 @@ save_path = os.path.join(save_folder, f'response_table_{nwb_fn[0:10]}.hdf5')
 
 save_f = h5py.File(save_path, 'a')
 
-strf_grp = save_f.create_group('strf_dff')
+strf_grp = save_f.create_group(f'strf_{trace_type}')
 strf_grp.attrs['description'] = '''
 NeuroAnalysisTools.SingleCellAnalysis.SpatialTemporalRecptiveField object
 '''
