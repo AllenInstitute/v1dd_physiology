@@ -25,7 +25,7 @@ nwb_list=("$search_dir"/M409828*.nwb)
 
 a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 
-python_path="/home/junz/anaconda3/envs/analysis/bin/python"
+python_path="/home/junz/anaconda3/envs/v1dd/bin/python"
 script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/response_table_building/0010_get_strf_dff_slurm.py"
 echo "Add strf dff to response table ..."
 "$python_path" "$script_path"  $a1
