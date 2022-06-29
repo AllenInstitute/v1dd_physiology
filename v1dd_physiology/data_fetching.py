@@ -431,6 +431,72 @@ def get_pika_roi_ids(nwb_f, plane_n):
     return roi_ids
 
 
+def get_plane_traces(nwb_f, plane_n, trace_type):
+    """
+    get the activity traces for rois in a imaging plane.
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    plane_n : string
+        name of the plane, should be 'plane0', 'plane1', ...
+
+    trace_type : string
+        type of trace to be extracted. Should be one of the 
+        following:
+            'raw'
+            'demixed'
+            'neuropil'
+            'subtracted'
+            'dff'
+            'events'
+
+    Returns
+    -------
+    traces : 2d array
+        activity traces of all rois in this imaging plane with 
+        specified tracetype. (roi x time)
+    trace_ts : 1d array
+        timestamps for the activity trace in seconds, 
+        len(trace_ts) == traces.shape[1]
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    if trace_type == 'raw':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw']
+    elif trace_type == 'demixed':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw_demixed']
+    elif trace_type == 'neuropil':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw_neuropil']
+    elif trace_type == 'subtracted':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/Flurescence/f_raw_subtracted']
+    elif trace_type == 'dff':
+        trace_grp = nwb_f[f'processing/rois_and_traces_{plane_n}' \
+                          f'/DfOverF/dff_raw']
+    elif trace_type == 'events':
+        trace_grp = nwb_f[f'processing/l0_events_{plane_n}' \
+                          f'/DfOverF/l0_events']
+    else:
+        raise LookupError(f'Do not understand "trace_type", should be '
+            f'one of the following ["raw", "demixed", "neuropil", "sutracted", '
+            f'"dff", "events"]. Got "{trace_type}".')
+
+    traces = trace_grp['data'][()]
+    trace_ts = trace_grp['timestamps'][()]
+
+    assert(traces.shape[1] == trace_ts.shape[0])
+
+    return traces, trace_ts
+
+
 def get_pika_roi_id(nwb_f, plane_n, roi_n):
     """
     get the pika roi id of an roi
@@ -593,6 +659,7 @@ def get_single_trace(nwb_f, plane_n, roi_n, trace_type):
     assert(trace.shape == trace_ts.shape)
 
     return trace, trace_ts
+
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
