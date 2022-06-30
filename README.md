@@ -1,11 +1,13 @@
 # v1dd_physiology  
-#### This python package allows the interaction with the Allen Institute V1 DeepDive Physiology data set. This data set contains dense calcium imaging (two-photon and three-photon) of excitatory neurons at the center of mouse primary visual cortex while displaying various visual stimuli. In total, data were collected from four mice expressing GCaMP6s as calcium indicator in excitatory neurons. The base data format loosely follows the [Neurodata Without Borders (nwb)](https://www.nwb.org/) standard.
+This python package allows the interaction with the Allen Institute V1 DeepDive Physiology data set. This data set contains dense calcium imaging (two-photon and three-photon) of excitatory neurons at the center of mouse primary visual cortex while displaying various visual stimuli. In total, data were collected from four mice expressing GCaMP6s as calcium indicator in excitatory neurons. The base data format loosely follows the [Neurodata Without Borders (nwb)](https://www.nwb.org/) standard.
 
-#### Importantly, the imaged tissue of one mouse were processed by volumetric EM processing and reconstruction to reveal detailed anatomical structures and synaptic-level connectome.  
+Importantly, the imaged tissue of one mouse were processed by volumetric EM processing and reconstruction to reveal detailed anatomical structures and synaptic-level connectome.  
 
-#### The description of the data set can be found [here](https://github.com/zhuangjun1981/v1dd_physiology/blob/main/v1dd_physiology/meta/database_description.md).  
+The description of the data set can be found [here](https://github.com/zhuangjun1981/v1dd_physiology/blob/main/v1dd_physiology/meta/database_description.md).  
 
-#### The project white paper can be found [here](https://github.com/zhuangjun1981/v1dd_physiology/blob/main/v1dd_physiology/meta/V1DD_WhitePaper_v6.pdf) and additional meta data can be found [here](https://github.com/zhuangjun1981/v1dd_physiology/tree/main/v1dd_physiology/nwb_building/meta_lims).  
+The project white paper can be found [here](https://github.com/zhuangjun1981/v1dd_physiology/blob/main/v1dd_physiology/meta/V1DD_WhitePaper_v6.pdf) and additional meta data can be found [here](https://github.com/zhuangjun1981/v1dd_physiology/tree/main/v1dd_physiology/nwb_building/meta_lims).  
+
+The example for using this package can be found in these [ipython notebooks](https://github.com/zhuangjun1981/v1dd_physiology/tree/main/v1dd_physiology/example_notebooks).
 
 &nbsp;
 ## Special dependency
