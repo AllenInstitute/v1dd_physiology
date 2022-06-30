@@ -661,6 +661,87 @@ def get_single_trace(nwb_f, plane_n, roi_n, trace_type):
     return trace, trace_ts
 
 
+def get_stim_list(nwb_f):
+    """
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    stims : list of strings
+        list of all displayed stimuli
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    stims = list(nwb_f['stimulus/presentation'].keys())
+
+    return stims
+
+
+def get_dgc_onset_times(nwb_f, dgc_type):
+    """
+    get onset times of each drifting grating condition
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    dgc_type: string
+        should be 'windowed' or 'full'
+
+    Returns
+    -------
+    dgc_onset_times : dictionary
+        {condition_name : onset_timestamps in seconds (1d array)}
+    """
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    dgc_grp = nwb_f[f'analysis/onsets_drifting_gratings_{dgc_type}']
+
+    dgc_onset_times = {}
+    for dgc_condi in sorted(dgc_grp):
+        dgc_onset_times.update(
+            {dgc_condi : dgc_grp[dgc_condi]['onset_ts_sec'][()]}
+            )
+
+    return dgc_onset_times
+
+
+def get_lsn_onset_times(nwb_f):
+    """
+    get onset times of each locally sparse noise square.
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    lsn_onset_times : dictionary
+        {square_name : onset_timestamps in seconds (1d array)}
+    """
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    lsn_grp = nwb_f['analysis/probe_onsets_lsn']
+
+    lsn_onset_times = {}
+    for probe in sorted(lsn_grp):
+        lsn_onset_times.update(
+            {probe : lsn_grp[probe][()]}
+            )
+
+    return lsn_onset_times
+
+    
+
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
 
