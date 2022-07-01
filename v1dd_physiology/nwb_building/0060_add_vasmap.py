@@ -22,16 +22,23 @@ for fi, fn in enumerate(fns):
 
     print(f'processing {fn}, {fi + 1}/{len(fns)} ...')
 
-    vasmap_wf, vasmap_2p = utils.get_vasmap(fn[0:10])
+    vasmap_wf, vasmap_mp = utils.get_vasmap(fn[0:10])
     vasmap_wf = ia.array_nor(vasmap_wf)
-    vasmap_2p = ia.array_nor(vasmap_2p)
+    vasmap_mp = ia.array_nor(vasmap_mp)
 
-    # rotate vasmaps recorded from deepscope to match standard view
-    # these transformation are only for 3p
-    vasmap_wf_r = ia.rigid_transform_cv2(vasmap_wf[:, ::-1], rotation=28).astype(np.float32)
-    vasmap_wf_r = ia.array_nor(vasmap_wf_r)
-    vasmap_2p_r = ia.rigid_transform_cv2(vasmap_2p, rotation=30).astype(np.float32)
-    vasmap_2p_r = ia.array_nor(vasmap_2p_r)
+    if fn[9] in '12345': # 2p
+        vasmap_wf_r = ia.rigid_transform_cv2_2d(vasmap_wf, rotation=140)[:, ::-1].astype(np.float32)
+        vasmap_wf_r = ia.array_nor(vasmap_wf_r)
+        vasmap_mp_r = ia.rigid_transform_cv2_2d(vasmap_mp, rotation=140)[:, ::-1].astype(np.float32)
+        vasmap_mp_r = ia.array_nor(vasmap_mp_r)
+
+    else: # 3p
+        # rotate vasmaps recorded from deepscope to match standard view
+        # these transformation are only for 3p
+        vasmap_wf_r = ia.rigid_transform_cv2(vasmap_wf[:, ::-1], rotation=28).astype(np.float32)
+        vasmap_wf_r = ia.array_nor(vasmap_wf_r)
+        vasmap_mp_r = ia.rigid_transform_cv2(vasmap_mp, rotation=30).astype(np.float32)
+        vasmap_mp_r = ia.array_nor(vasmap_mp_r)
 
     nwb_f = nt.RecordedFile(os.path.join(data_folder, fn))
 
@@ -41,11 +48,11 @@ for fi, fn in enumerate(fns):
     nwb_f.add_acquisition_image('vasmap_wf_rotated', vasmap_wf_r,
                                 description='wide field surface vasculature map '
                                             'through cranial window rotated to match standard view')
-    nwb_f.add_acquisition_image('vasmap_2p', vasmap_2p,
-                                description='2p surface vasculature map through '
+    nwb_f.add_acquisition_image('vasmap_mp', vasmap_mp,
+                                description='multi-photon surface vasculature map through '
                                             'cranial window original')
-    nwb_f.add_acquisition_image('vasmap_2p_rotated', vasmap_2p_r,
-                                description='2p surface vasculature map through '
+    nwb_f.add_acquisition_image('vasmap_mp_rotated', vasmap_mp_r,
+                                description='multi-photon surface vasculature map through '
                                             'cranial window rotated to match standard view')
     nwb_f.close()
 
