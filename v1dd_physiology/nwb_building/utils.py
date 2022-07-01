@@ -548,6 +548,155 @@ def get_rois_and_traces(
     return plane_dict
 
 
+def get_rois_and_traces_other_mice(
+    exp_id,
+    folder_projection=r'\\allen\programs\mindscope\workgroups\surround\projections',
+    folder_rois=r'\\allen\programs\mindscope\workgroups\surround\segmentation',
+    folder_noisy_trace_raw=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\traces_2022',
+    folder_noisy_trace_demixed=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\demix_2022',
+    folder_noisy_trace_subtracted=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\neuropil_2022',
+    folder_noisy_trace_dff=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\dff_2022',
+    ):
+    
+    """
+    Collect rois and traces information for other three mice
+    """
+
+    plane_dict = {}
+
+    # ================= projection ========================
+    proj_max_noisy_path = os.path.join(
+        folder_projection, 'noisy', 'max', f'max_{exp_id}.h5')
+    proj_max_noisy = h5py.File(proj_max_noisy_path, 'r')['data'][()]
+
+    proj_avg_noisy_path = os.path.join(
+        folder_projection, 'noisy', 'avg', f'avg_{exp_id}.h5')
+    proj_avg_noisy = h5py.File(proj_avg_noisy_path, 'r')['data'][()]
+
+    proj_max_denoi_path = os.path.join(
+        folder_projection, 'max', f'max_{exp_id}.h5')
+    proj_max_denoi = h5py.File(proj_max_denoi_path, 'r')['data'][()]
+
+    proj_avg_denoi_path = os.path.join(
+        folder_projection, 'avg', f'avg_{exp_id}.h5')
+    proj_avg_denoi = h5py.File(proj_avg_denoi_path, 'r')['data'][()]
+
+    proj_cor_denoi_path = os.path.join(
+        folder_projection, 'correlation', 'image', f'{exp_id}_corr.h5')
+    proj_cor_denoi = h5py.File(proj_cor_denoi_path, 'r')['corr_projection'][()]
+
+    plane_dict.update({
+        'projection_max_noisy' : proj_max_noisy,
+        'projection_avg_noisy' : proj_avg_noisy,
+        'projection_max_denoised' : proj_max_denoi,
+        'projection_avg_denoised' : proj_avg_denoi,
+        'projection_cor_denoised' : proj_cor_denoi
+        })
+    # print('bbbb')
+    # ================= projection ========================
+
+    # f, axs = plt.subplots(ncols=3, nrows=2, figsize=(10, 6))
+    # f.suptitle(f'experiment: {exp_id}')
+    # axs[0, 0].imshow(proj_avg_noisy)
+    # axs[0, 0].set_title('noisy mean')
+    # axs[0, 1].imshow(proj_max_noisy)
+    # axs[0, 1].set_title('noisy max')
+    # axs[1, 0].imshow(proj_avg_denoi)
+    # axs[1, 0].set_title('denoised mean')
+    # axs[1, 1].imshow(proj_max_denoi)
+    # axs[1, 1].set_title('denoised max')
+    # axs[1, 2].imshow(proj_cor_denoi)
+    # axs[1, 2].set_title('denoised corr')
+    # for ax in axs.flat:
+    #     ax.set_axis_off()
+    # plt.tight_layout()
+    # plt.show()
+
+    # ================= get motion correction offsets ========================
+    # mc_path = os.path.join(folder_noisy, exp_id, f'{exp_id}_rigid_motion_transform.csv')
+    # mc_df = pd.read_csv(mc_path)
+    # mc_x = np.array(mc_df['x'], dtype=np.int)
+    # mc_y = np.array(mc_df['y'], dtype=np.int)
+    # mc_corr = np.array(mc_df['correlation'])
+    # plane_dict.update({
+    #     'motion_correction_x' : mc_x,
+    #     'motion_correction_y' : mc_y,
+    #     'motion_correction_corr' : mc_corr
+    #     })
+    # ================= get motion correction offsets ========================
+
+    # ================= get roi list ========================
+    roi_json_path = ft.look_for_unique_file(
+        source=folder_rois,
+        identifiers=[exp_id],
+        file_type='json',
+        is_full_path=True)
+    roi_list, roi_id_list = get_roi_mask_list_from_pipeline_json(roi_json_path)
+    plane_dict.update({
+        'roi_list' : roi_list,
+        'roi_id_list': [f'{exp_id}_{r:04d}' for r in roi_id_list]
+        })
+    # print('cccc')
+    # ================= get roi list ========================
+
+
+    # ================= noise traces ========================
+    # the true roi ids in the right order to be checked
+    roi_ids_target = np.array([int(r[-4:]) for r in plane_dict['roi_id_list']])
+    
+    # get raw noisy traces
+    trace_noisy_raw_path = os.path.join(
+        folder_noisy_trace_raw, exp_id, 'roi_traces.h5')
+    roi_ids, traces_noisy_raw = get_traces_from_pipeline_h5(trace_noisy_raw_path)
+    assert(np.array_equal(roi_ids, roi_ids_target))
+    # print('dddd')
+
+    # get neuropil noisy traces
+    trace_noisy_neuropil_path = os.path.join(
+        folder_noisy_trace_raw, exp_id, 'neuropil_traces.h5')
+    roi_ids, traces_noisy_neuropil = get_traces_from_pipeline_h5(trace_noisy_neuropil_path)
+    assert(np.array_equal(roi_ids, roi_ids_target))
+    # print('eeee')
+
+    # get demixed noisy traces
+    trace_noisy_demixed_path = os.path.join(
+        folder_noisy_trace_demixed, exp_id, f'{exp_id}_demixed_traces.h5')
+    roi_ids, traces_noisy_demixed = get_traces_from_pipeline_h5(trace_noisy_demixed_path)
+    assert(np.array_equal(roi_ids, roi_ids_target))
+    # print('ffff')
+
+    # get subtract noisy traces
+    trace_noisy_subtracted_path = os.path.join(
+        folder_noisy_trace_subtracted, exp_id, 'neuropil_correction.h5')
+    roi_ids, traces_noisy_subtracted, rs, rmses \
+        = get_neuropil_subtracted_traces_from_pipeline_h5(trace_noisy_subtracted_path)
+    assert(np.array_equal(roi_ids, roi_ids_target))
+    # print('gggg')
+
+    # get dff traces
+    trace_noisy_dff_path = os.path.join(
+        folder_noisy_trace_dff, exp_id, f'{exp_id}_dff.h5')
+    roi_ids, traces_noisy_dff, num_frame_small_baseline, dff_sigmas \
+        = get_dff_traces_from_pipeline_h5(trace_noisy_dff_path)
+    assert(np.array_equal(roi_ids, roi_ids_target))
+    # print('hhhh')
+
+    plane_dict.update({
+        'traces_noisy_raw': traces_noisy_raw,
+        'traces_noisy_neuropil': traces_noisy_neuropil,
+        'traces_noisy_demixed': traces_noisy_demixed,
+        'traces_noisy_subtracted': traces_noisy_subtracted,
+        'traces_noisy_dff': traces_noisy_dff,
+        'subtraction_r': rs,
+        'subtraction_rmse': rmses,
+        'dff_frame_num_small_baseline': num_frame_small_baseline,
+        'dff_sigma': dff_sigmas
+        })
+    # ================= noise traces ========================
+
+    return plane_dict
+
+
 def add_rois_and_traces_to_nwb(nwb_f, plane_n, plane_dict,
     ts_path='/acquisition/timeseries/digital_2p_vsync_rise/timestamps'):
     """
