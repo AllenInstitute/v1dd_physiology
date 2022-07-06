@@ -14,6 +14,9 @@ nwb_folder = r"\\allen\programs\mindscope\workgroups\surround" \
 
 save_folder = os.path.join(nwb_folder, 'problematic')
 
+if not os.path.isdir(save_folder):
+    os.makedirs(save_folder)
+
 for sess in sess_to_move:
 
     fn = ft.look_for_unique_file(
@@ -25,7 +28,11 @@ for sess in sess_to_move:
     print(fn)
 
     if fn is not None: 
-        shutil.move(
-            os.path.join(nwb_folder, fn), 
-            os.path.join(save_folder, fn)
-            )
+
+        file_path = os.path.join(nwb_folder, fn)
+        save_path = os.path.join(save_folder, fn)
+
+        if os.path.isfile(save_path):
+            os.remove(save_path)
+
+        shutil.move(file_path, save_path)

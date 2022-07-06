@@ -13,3 +13,4 @@ python 0150_add_stimulus_table.py
 python 0160_add_lsn_onset.py
 python 0170_add_dgc_onset_windowed.py
 python 0180_add_dgc_onset_full.py
+python 0185_add_nature_image_index.py

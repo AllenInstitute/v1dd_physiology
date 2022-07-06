@@ -11,8 +11,8 @@
 #SBATCH --mail-type=END,FAIL                # Mail events (NONE, BEGIN, END, FAIL, ALL)
 
 # %A" is replaced by the job ID and "%a" with the array index
-#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/add_segmentation_output_409828/segmentation_%A_%a.out
-#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/add_segmentation_output_409828/segmentation_%A_%a.err
+#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_roi&trace_%A_%a.out
+#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_roi&trace_%A_%a.err
  
 pwd; hostname; date
 
@@ -27,7 +27,7 @@ nwb_list=("$search_dir"/M409828*.nwb)
 a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 
 python_path="/home/junz/anaconda3/envs/analysis/bin/python"
-script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/nwb_building/0190_add_rois_and_traces_slurm.py"
+script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/nwb_building/0190_add_rois_and_traces_409828_slurm.py"
 echo "adding rois and traces"
 "$python_path" "$script_path" $a1
 
