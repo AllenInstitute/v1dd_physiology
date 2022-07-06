@@ -46,30 +46,33 @@ plane_ns = daf.get_plane_names(nwb_f)
 plane_ns.sort()
 
 for plane_n in plane_ns:
+
     traces, trace_ts = daf.get_plane_traces(
         nwb_f=nwb_f, plane_n=plane_n, trace_type=trace_type)
 
-    frame_dur = np.mean(np.diff(trace_ts))
-    frame_start = int(np.floor(time_win[0] / frame_dur))
-    frame_end = int(np.ceil(time_win[1] / frame_dur))
-    t_axis = np.arange(frame_end - frame_start) * frame_dur + (frame_start * frame_dur)
+    if len(traces) > 1: # there are rois in the imaging plane
 
-    strf_grp_plane = strf_grp.create_group(plane_n)
-    strf_grp_plane.attrs['sta_timestamps'] = t_axis
+        frame_dur = np.mean(np.diff(trace_ts))
+        frame_start = int(np.floor(time_win[0] / frame_dur))
+        frame_end = int(np.ceil(time_win[1] / frame_dur))
+        t_axis = np.arange(frame_end - frame_start) * frame_dur + (frame_start * frame_dur)
 
-    for probe_i, probe_n in enumerate(probe_ns):
-        probe_onsets = onset_grp[probe_n][()]
+        strf_grp_plane = strf_grp.create_group(plane_n)
+        strf_grp_plane.attrs['sta_timestamps'] = t_axis
 
-        curr_probe_grp = strf_grp_plane.create_group(probe_n)
-        curr_probe_grp['global_trigger_timestamps'] = probe_onsets
-        curr_probe_grp.attrs['sta_traces_dimenstion'] = 'roi x trial x timepoint'
+        for probe_i, probe_n in enumerate(probe_ns):
+            probe_onsets = onset_grp[probe_n][()]
 
-        sta = get_sta(
-            arr=traces, arr_ts=trace_ts, trigger_ts=probe_onsets, 
-            frame_start=frame_start, frame_end=frame_end
-            )
+            curr_probe_grp = strf_grp_plane.create_group(probe_n)
+            curr_probe_grp['global_trigger_timestamps'] = probe_onsets
+            curr_probe_grp.attrs['sta_traces_dimenstion'] = 'roi x trial x timepoint'
 
-        curr_probe_grp.create_dataset(f'sta_{trace_type}', data=sta, compression='lzf')
+            sta = get_sta(
+                arr=traces, arr_ts=trace_ts, trigger_ts=probe_onsets, 
+                frame_start=frame_start, frame_end=frame_end
+                )
+
+            curr_probe_grp.create_dataset(f'sta_{trace_type}', data=sta, compression='lzf')
 
 nwb_f.close()
 save_f.close()

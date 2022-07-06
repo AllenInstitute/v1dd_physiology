@@ -57,10 +57,201 @@ def get_nwb_path(session_id, database_path=db_path):
     return nwb_path
 
 
+def check_nwb_integrity(nwb_f, verbose=True):
+    """
+    Check the data integrity of an nwb file, and 
+    print results. Will not raise Exceptions. 
+
+    Please note this check is not exhaustive.
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    verbose : bool
+
+    Returns
+    -------
+    msg : string
+        results of this check
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    msg = f'\nCheck integrity of {os.path.split(nwb_f.filename)[1]} ...'
+    
+    # check vasculature map
+    for vm in ['vasmap_mp', 'vasmap_mp_rotated', 'vasmap_wf', 'vasmap_wf_rotated']:
+        if vm not in nwb_f['acquisition/images']:
+            msg += f'\n\tCannot find "{vm}" in "/acquisition/images".'.expandtabs(4)
+
+    # check raw time sync data
+    for sync in ['digital_2p_vsync',
+                 'digital_cam1_exposure',
+                 'digital_cam2_exposure',
+                 'digital_stim_photodiode',
+                 'digital_stim_vsync']:
+        if (f'{sync}_fall' not in nwb_f['acquisition/timeseries']) or \
+        (f'{sync}_rise' not in nwb_f['acquisition/timeseries']):
+
+            msg += f'\n\tCannot find "{sync}" signal in "/acquisition/timeseries".'.expandtabs(4)
+
+    # check stimulus
+    for stim in ['drifting_gratings_full',
+                 'drifting_gratings_windowed',
+                 'locally_sparse_noise',
+                 'natural_images',
+                 'natural_images_12',
+                 'natural_movie',
+                 'spontaneous']:
+        if stim not in nwb_f['stimulus/presentation']:
+            msg += f'\n\tCannot find "{stim}" in "/stimulus/presentation".'.expandtabs(4)
+
+    # check stimulus onset times
+    for stim_on_t in ['onsets_drifting_gratings_full',
+                      'onsets_drifting_gratings_windowed',
+                      'probe_onsets_lsn']:
+        if stim_on_t not in nwb_f['analysis']:
+            msg += f'\n\tCannot find "{stim_on_t}" in "/analysis".'.expandtabs(4)
+
+    # check eye tracking
+    if 'eye_tracking_right' not in nwb_f['processing']:
+        msg += '\n\tCannot find "eye_tracking_right" in "/processing".'.expandtabs(4)
+
+    # check locomotion
+    if 'locomotion' not in nwb_f['processing']:
+        msg += '\n\tCannot find "locomotion" in "/processing".'.expandtabs(4)
+
+    # check imaging planes
+    rtkeys = [k for k in nwb_f['processing'] if k.startswith('rois_and_traces_plane')]
+    msg += f'\n\tTotal number of imaging plane(s): {len(rtkeys)}.'.expandtabs(4)
+
+    for plane_i in range(len(rtkeys)):
+        msg += f'\n\tChecking plane{plane_i} ...'.expandtabs(4)
+        rtkey = f'rois_and_traces_plane{plane_i}'
+        evkey = f'l0_events_plane{plane_i}'
+
+        if not rtkey in nwb_f['processing']:
+            msg += f'\n\t\tCannot find "{rtkey}" in "/processing".'.expandtabs(4)
+        elif not evkey in nwb_f['processing']:
+            msg += f'\n\t\tCannot find "{evkey}" in "/processing".'.expandtabs(4)
+        else:
+            seg_path = f'ImageSegmentation/imaging_plane'
+            if not seg_path in nwb_f[f'processing/{rtkey}']:
+                msg += f'\n\t\tCannot find segmentation results ("{seg_path}") in ' \
+                       f'"/processing/{rtkey}".'.expandtabs(4)
+            else:
+
+                # check traces
+                trace_shapes = {}
+                for ftkey in ['f_raw',
+                              'f_raw_demixed',
+                              'f_raw_neuropil',
+                              'f_raw_subtracted']:
+                    if not f'Fluorescence/{ftkey}' in nwb_f[f'processing/{rtkey}']:
+                        msg += f'\n\t\tCannot find extracted traces ("Fluorescence/{ftkey}") in ' \
+                               f'"/processing/{rtkey}"'.expandtabs(4)
+                    else:
+                        trace_shapes.update({ftkey : nwb_f[f'processing/{rtkey}/Fluorescence/{ftkey}/data'].shape})
+
+                # check dF/F
+                if not 'DfOverF/dff_raw' in nwb_f[f'processing/{rtkey}']:
+                    msg += f'\n\t\tCannot find extracted dF/F traces ("DfOverF/dff_raw") in ' \
+                           f'"/processing/{rtkey}"'.expandtabs(4)
+                else:
+                    trace_shapes.update({'dff_raw' : nwb_f[f'processing/{rtkey}/DfOverF/dff_raw/data'].shape})
+
+                # check events
+                if not 'DfOverF/l0_events' in nwb_f[f'processing/{evkey}']:
+                    msg += f'\n\t\tCannot find extracted events ("DfOverF/l0_events") in ' \
+                           f'/processing/{evkey}'.expandtabs(4)
+                else:
+                    trace_shapes.update({'l0_events' : nwb_f[f'processing/{evkey}/DfOverF/l0_events/data'].shape})
+
+                # check projection images
+                for ri in ['correlation_projection_denoised',
+                           'max_projection_denoised',
+                           'max_projection_raw',
+                           'mean_projection_denoised',
+                           'mean_projection_raw']:
+                    if f'reference_images/{ri}' not in nwb_f[f'processing/{rtkey}/{seg_path}']:
+                        msg += f'\n\t\tCannot find projection imagings ("reference_images/{ri}")' \
+                               f'in "/processing/{rtkey}/{seg_path}"'.expandtabs(4)
+
+                roi_ns = [rk for rk in nwb_f[f'processing/{rtkey}/{seg_path}'].keys() if 
+                          rk.startswith('roi_') and (not rk.endswith('_list'))]
+                roi_ns.sort()
+                roi_num = len(roi_ns)
+
+                msg += f'\n\t\tThis plane has {len(roi_ns)} rois.'.expandtabs(4)
+
+                # print(trace_shapes)
+
+                # check trace shape
+                if roi_num == 0: # zero ori
+                    for t_n, t_shape in trace_shapes.items():
+                        if t_shape != (1, 1):
+                            msg += f'\n\t\t{t_n} does not have shape: (1, 1).'
+                else:
+                    # check roi names
+                    roi_list = nwb_f[f'processing/{rtkey}/{seg_path}/roi_list'][()]
+                    roi_list = [r.decode() for r in roi_list]
+                    if not np.array_equal(np.array(roi_ns), np.array(roi_list)):
+                        msg += f'\n\t\troi group names and roi_list do not match.'.expandtabs(4)
+
+                    num_time_sample = []
+                    for t_n, t_shape in trace_shapes.items():
+
+                        if t_shape[0] != roi_num:
+                            msg += f'\n\t\tThe first dimension of {t_n} ({t_shape[0]}) does not ' \
+                                   f'match the number of rois ({roi_num}).'.expandtabs(4)
+
+                        num_time_sample.append(t_shape[1])
+
+                    if len(set(num_time_sample)) != 1:
+                        msg += f'\n\t\tNumber of timestamps among different traces are not the ' \
+                               f'same ({set(num_time_sample)}).'.expandtabs(4)
+
+                # check prediction shape
+                cla_grp_key = f'/analysis/roi_classification_pika/plane{plane_i}'
+                if not cla_grp_key in nwb_f:
+                    msg += f'\n\t\tCannot find pika classification results: "{cla_grp_key}"'.expandtabs(4)
+                else:
+                    cla_grp = nwb_f[cla_grp_key]
+                    for cla_key in ['pipeline_roi_names',
+                                    'prediction',
+                                    'roi_names',
+                                    'score']:
+                        if cla_key not in cla_grp:
+                            msg += f'\n\t\tCannot find {cla_key} in {cla_grp_key}.'.expandtabs(4)
+                        else:
+                            len_pred = nwb_f[f'{cla_grp_key}/{cla_key}'].shape[0]
+                            if len_pred != roi_num:
+                                msg += f'\n\t\tThe length of prediction results "{cla_grp_key}/{cla_key}" ({len_pred}) ' \
+                                      f'does not match the number of rois ({roi_num}).'.expandtabs(4)
+
+    msg += '\nDone.'
+
+    if verbose:
+        print(msg)
+    
+    return msg
+
+
 def get_scope_type(nwb_f):
     """
-    if two-photon return "2p"
-    if three-photon return "3p"
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    scope_type : string
+        if two-photon return "2p"
+        if three-photon return "3p"
     """
     if nwb_f.mode != 'r':
         raise OSError('The nwb file should be opened in read-only mode.')
@@ -741,7 +932,6 @@ def get_lsn_onset_times(nwb_f):
     return lsn_onset_times
 
     
-
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
 
@@ -750,3 +940,13 @@ def get_lsn_onset_times(nwb_f):
 
 
 # ==================== FETCHING DATA FROM RESPONSE METRICS FILES =========================
+
+
+if __name__ == "__main__":
+
+    nwb_path = r"\\allen\programs\mindscope\workgroups\surround" \
+               r"\v1dd_in_vivo_new_segmentation\data\nwbs" \
+               r"\M427836_25_20190426.nwb"
+
+    nwb_f = h5py.File(nwb_path, 'r')
+    check_nwb_integrity(nwb_f=nwb_f, verbose=True)
