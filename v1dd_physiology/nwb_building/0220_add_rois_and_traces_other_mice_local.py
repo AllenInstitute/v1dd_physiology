@@ -5,7 +5,7 @@ import utils as utils
 
 nwb_path = r"\\allen\programs\mindscope\workgroups\surround" \
            r"\v1dd_in_vivo_new_segmentation\data\nwbs" \
-           r"\M416296_12_20181214.nwb"
+           r"\M427836_25_20190426.nwb"
 
 curr_folder = os.path.dirname(os.path.realpath(__file__))
 os.chdir(curr_folder)
@@ -17,7 +17,7 @@ print(f'adding rois and traces to {nwb_fn} ...')
 sess_dict = utils.get_all_experiments_pika_meta(nwb_fn[:10])
 print(sess_dict.keys())
 
-# nwb_f = nt.RecordedFile(nwb_path)
+nwb_f = nt.RecordedFile(nwb_path)
 
 for plane_n, plane_dict in sess_dict.items():
 
@@ -30,10 +30,10 @@ for plane_n, plane_dict in sess_dict.items():
     plane_dict.update({'plane_num' : len(sess_dict)})
     # print(plane_dict.keys())
 
-    # utils.add_rois_and_traces_to_nwb(
-    #     nwb_f=nwb_f, 
-    #     plane_n=plane_n, 
-    #     plane_dict=plane_dict
-    #     )
+    utils.add_rois_and_traces_to_nwb_other_mice(
+        nwb_f=nwb_f, 
+        plane_n=plane_n, 
+        plane_dict=plane_dict
+        )
 
-# nwb_f.close()
+nwb_f.close()

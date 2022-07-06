@@ -11,8 +11,8 @@
 #SBATCH --mail-type=END,FAIL                # Mail events (NONE, BEGIN, END, FAIL, ALL)
 
 # %A" is replaced by the job ID and "%a" with the array index
-#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_strf_dff_%A_%a.out
-#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_strf_dff_%A_%a.err
+#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_strf_event_%A_%a.out
+#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_strf_event_%A_%a.err
 
 pwd; hostname; date
 

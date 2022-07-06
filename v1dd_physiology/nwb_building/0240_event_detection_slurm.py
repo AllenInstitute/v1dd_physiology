@@ -18,7 +18,7 @@ l0 = SourceFileLoader(
     '/allen/programs/braintv/workgroups'
     '/cortexmodels/peterl/forward_model/l0_analysis_deepscope.py').load_module()
 
-output_dir = '/allen/programs/mindscope/workgroups/surround/jun_testing/event_detection/event_output'
+output_dir = '/allen/programs/mindscope/workgroups/surround/jun_testing/event_detection'
 
 curr_folder = os.path.dirname(os.path.realpath(__file__))
 os.chdir(curr_folder)
@@ -51,8 +51,16 @@ for i in range(plane_num):
     else:
         dff = f['processing'][f'rois_and_traces_plane{i}']['DfOverF']['dff_raw']['data'][()]
         ts = f['processing'][f'rois_and_traces_plane{i}']['DfOverF']['dff_raw']['timestamps'][()]
-        dff30Hz = resample_poly(dff, 5, 1, axis=1)
-        ts30Hz = resample_poly(ts, 5, 1)
-        l0a = l0.L0_analysis(dff30Hz)  # needs to be array of arrays
-        events = l0a.get_events()
-        np.savez_compressed(output_path, dff = dff30Hz, ts = ts30Hz,  events=events, noise_stds=l0a._noise_stds, lambdas = l0a.lambdas)
+
+        if len(dff) == 1:
+            np.savez_compressed(output_path, dff=np.array([[np.nan]]), 
+                ts=np.array([np.nan]),  events=np.array([[np.nan]]), 
+                noise_stds=np.array([np.nan]), lambdas=np.array([np.nan]))
+        else:
+            dff30Hz = resample_poly(dff, 5, 1, axis=1)
+            ts30Hz = resample_poly(ts, 5, 1)
+            l0a = l0.L0_analysis(dff30Hz)  # needs to be array of arrays
+            events = l0a.get_events()
+            np.savez_compressed(
+                output_path, dff=dff30Hz, ts=ts30Hz,  events=events, 
+                noise_stds=l0a._noise_stds, lambdas=l0a.lambdas)

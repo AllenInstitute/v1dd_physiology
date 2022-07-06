@@ -548,155 +548,6 @@ def get_rois_and_traces(
     return plane_dict
 
 
-def get_rois_and_traces_other_mice(
-    exp_id,
-    folder_projection=r'\\allen\programs\mindscope\workgroups\surround\projections',
-    folder_rois=r'\\allen\programs\mindscope\workgroups\surround\segmentation',
-    folder_noisy_trace_raw=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\traces_2022',
-    folder_noisy_trace_demixed=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\demix_2022',
-    folder_noisy_trace_subtracted=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\neuropil_2022',
-    folder_noisy_trace_dff=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\dff_2022',
-    ):
-    
-    """
-    Collect rois and traces information for other three mice
-    """
-
-    plane_dict = {}
-
-    # ================= projection ========================
-    proj_max_noisy_path = os.path.join(
-        folder_projection, 'noisy', 'max', f'max_{exp_id}.h5')
-    proj_max_noisy = h5py.File(proj_max_noisy_path, 'r')['data'][()]
-
-    proj_avg_noisy_path = os.path.join(
-        folder_projection, 'noisy', 'avg', f'avg_{exp_id}.h5')
-    proj_avg_noisy = h5py.File(proj_avg_noisy_path, 'r')['data'][()]
-
-    proj_max_denoi_path = os.path.join(
-        folder_projection, 'max', f'max_{exp_id}.h5')
-    proj_max_denoi = h5py.File(proj_max_denoi_path, 'r')['data'][()]
-
-    proj_avg_denoi_path = os.path.join(
-        folder_projection, 'avg', f'avg_{exp_id}.h5')
-    proj_avg_denoi = h5py.File(proj_avg_denoi_path, 'r')['data'][()]
-
-    proj_cor_denoi_path = os.path.join(
-        folder_projection, 'correlation', 'image', f'{exp_id}_corr.h5')
-    proj_cor_denoi = h5py.File(proj_cor_denoi_path, 'r')['corr_projection'][()]
-
-    plane_dict.update({
-        'projection_max_noisy' : proj_max_noisy,
-        'projection_avg_noisy' : proj_avg_noisy,
-        'projection_max_denoised' : proj_max_denoi,
-        'projection_avg_denoised' : proj_avg_denoi,
-        'projection_cor_denoised' : proj_cor_denoi
-        })
-    # print('bbbb')
-    # ================= projection ========================
-
-    # f, axs = plt.subplots(ncols=3, nrows=2, figsize=(10, 6))
-    # f.suptitle(f'experiment: {exp_id}')
-    # axs[0, 0].imshow(proj_avg_noisy)
-    # axs[0, 0].set_title('noisy mean')
-    # axs[0, 1].imshow(proj_max_noisy)
-    # axs[0, 1].set_title('noisy max')
-    # axs[1, 0].imshow(proj_avg_denoi)
-    # axs[1, 0].set_title('denoised mean')
-    # axs[1, 1].imshow(proj_max_denoi)
-    # axs[1, 1].set_title('denoised max')
-    # axs[1, 2].imshow(proj_cor_denoi)
-    # axs[1, 2].set_title('denoised corr')
-    # for ax in axs.flat:
-    #     ax.set_axis_off()
-    # plt.tight_layout()
-    # plt.show()
-
-    # ================= get motion correction offsets ========================
-    # mc_path = os.path.join(folder_noisy, exp_id, f'{exp_id}_rigid_motion_transform.csv')
-    # mc_df = pd.read_csv(mc_path)
-    # mc_x = np.array(mc_df['x'], dtype=np.int)
-    # mc_y = np.array(mc_df['y'], dtype=np.int)
-    # mc_corr = np.array(mc_df['correlation'])
-    # plane_dict.update({
-    #     'motion_correction_x' : mc_x,
-    #     'motion_correction_y' : mc_y,
-    #     'motion_correction_corr' : mc_corr
-    #     })
-    # ================= get motion correction offsets ========================
-
-    # ================= get roi list ========================
-    roi_json_path = ft.look_for_unique_file(
-        source=folder_rois,
-        identifiers=[exp_id],
-        file_type='json',
-        is_full_path=True)
-    roi_list, roi_id_list = get_roi_mask_list_from_pipeline_json(roi_json_path)
-    plane_dict.update({
-        'roi_list' : roi_list,
-        'roi_id_list': [f'{exp_id}_{r:04d}' for r in roi_id_list]
-        })
-    # print('cccc')
-    # ================= get roi list ========================
-
-
-    # ================= noise traces ========================
-    # the true roi ids in the right order to be checked
-    roi_ids_target = np.array([int(r[-4:]) for r in plane_dict['roi_id_list']])
-    
-    # get raw noisy traces
-    trace_noisy_raw_path = os.path.join(
-        folder_noisy_trace_raw, exp_id, 'roi_traces.h5')
-    roi_ids, traces_noisy_raw = get_traces_from_pipeline_h5(trace_noisy_raw_path)
-    assert(np.array_equal(roi_ids, roi_ids_target))
-    # print('dddd')
-
-    # get neuropil noisy traces
-    trace_noisy_neuropil_path = os.path.join(
-        folder_noisy_trace_raw, exp_id, 'neuropil_traces.h5')
-    roi_ids, traces_noisy_neuropil = get_traces_from_pipeline_h5(trace_noisy_neuropil_path)
-    assert(np.array_equal(roi_ids, roi_ids_target))
-    # print('eeee')
-
-    # get demixed noisy traces
-    trace_noisy_demixed_path = os.path.join(
-        folder_noisy_trace_demixed, exp_id, f'{exp_id}_demixed_traces.h5')
-    roi_ids, traces_noisy_demixed = get_traces_from_pipeline_h5(trace_noisy_demixed_path)
-    assert(np.array_equal(roi_ids, roi_ids_target))
-    # print('ffff')
-
-    # get subtract noisy traces
-    trace_noisy_subtracted_path = os.path.join(
-        folder_noisy_trace_subtracted, exp_id, 'neuropil_correction.h5')
-    roi_ids, traces_noisy_subtracted, rs, rmses \
-        = get_neuropil_subtracted_traces_from_pipeline_h5(trace_noisy_subtracted_path)
-    assert(np.array_equal(roi_ids, roi_ids_target))
-    # print('gggg')
-
-    # get dff traces
-    trace_noisy_dff_path = os.path.join(
-        folder_noisy_trace_dff, exp_id, f'{exp_id}_dff.h5')
-    roi_ids, traces_noisy_dff, num_frame_small_baseline, dff_sigmas \
-        = get_dff_traces_from_pipeline_h5(trace_noisy_dff_path)
-    assert(np.array_equal(roi_ids, roi_ids_target))
-    # print('hhhh')
-
-    plane_dict.update({
-        'traces_noisy_raw': traces_noisy_raw,
-        'traces_noisy_neuropil': traces_noisy_neuropil,
-        'traces_noisy_demixed': traces_noisy_demixed,
-        'traces_noisy_subtracted': traces_noisy_subtracted,
-        'traces_noisy_dff': traces_noisy_dff,
-        'subtraction_r': rs,
-        'subtraction_rmse': rmses,
-        'dff_frame_num_small_baseline': num_frame_small_baseline,
-        'dff_sigma': dff_sigmas
-        })
-    # ================= noise traces ========================
-
-    return plane_dict
-
-
 def add_rois_and_traces_to_nwb(nwb_f, plane_n, plane_dict,
     ts_path='/acquisition/timeseries/digital_2p_vsync_rise/timestamps'):
     """
@@ -865,4 +716,423 @@ def add_rois_and_traces_to_nwb(nwb_f, plane_n, plane_dict,
     trace_dff_if.finalize()
 
     rt_mo.finalize()
+
+
+def get_rois_and_traces_other_mice(
+    exp_id,
+    folder_projection=r'\\allen\programs\mindscope\workgroups\surround\projections',
+    folder_rois=r'\\allen\programs\mindscope\workgroups\surround\segmentation',
+    folder_noisy_trace_raw=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\traces_2022',
+    folder_noisy_trace_demixed=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\demix_2022',
+    folder_noisy_trace_subtracted=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\neuropil_2022',
+    folder_noisy_trace_dff=r'\\allen\programs\mindscope\workgroups\surround\trace_extraction_2022\dff_2022',
+    ):
+    
+    """
+    Collect rois and traces information for other three mice
+    """
+
+    plane_dict = {}
+
+    # ================= projection ========================
+    proj_max_noisy_path = os.path.join(
+        folder_projection, 'noisy', 'max', f'max_{exp_id}.h5')
+    proj_max_noisy = h5py.File(proj_max_noisy_path, 'r')['data'][()]
+
+    proj_avg_noisy_path = os.path.join(
+        folder_projection, 'noisy', 'avg', f'avg_{exp_id}.h5')
+    proj_avg_noisy = h5py.File(proj_avg_noisy_path, 'r')['data'][()]
+
+    proj_max_denoi_path = os.path.join(
+        folder_projection, 'max', f'max_{exp_id}.h5')
+    proj_max_denoi = h5py.File(proj_max_denoi_path, 'r')['data'][()]
+
+    proj_avg_denoi_path = os.path.join(
+        folder_projection, 'avg', f'avg_{exp_id}.h5')
+    proj_avg_denoi = h5py.File(proj_avg_denoi_path, 'r')['data'][()]
+
+    proj_cor_denoi_path = os.path.join(
+        folder_projection, 'correlation', 'image', f'{exp_id}_corr.h5')
+    proj_cor_denoi = h5py.File(proj_cor_denoi_path, 'r')['corr_projection'][()]
+
+    plane_dict.update({
+        'projection_max_noisy' : proj_max_noisy,
+        'projection_avg_noisy' : proj_avg_noisy,
+        'projection_max_denoised' : proj_max_denoi,
+        'projection_avg_denoised' : proj_avg_denoi,
+        'projection_cor_denoised' : proj_cor_denoi
+        })
+    # print('bbbb')
+    # ================= projection ========================
+
+    # f, axs = plt.subplots(ncols=3, nrows=2, figsize=(10, 6))
+    # f.suptitle(f'experiment: {exp_id}')
+    # axs[0, 0].imshow(proj_avg_noisy)
+    # axs[0, 0].set_title('noisy mean')
+    # axs[0, 1].imshow(proj_max_noisy)
+    # axs[0, 1].set_title('noisy max')
+    # axs[1, 0].imshow(proj_avg_denoi)
+    # axs[1, 0].set_title('denoised mean')
+    # axs[1, 1].imshow(proj_max_denoi)
+    # axs[1, 1].set_title('denoised max')
+    # axs[1, 2].imshow(proj_cor_denoi)
+    # axs[1, 2].set_title('denoised corr')
+    # for ax in axs.flat:
+    #     ax.set_axis_off()
+    # plt.tight_layout()
+    # plt.show()
+
+    # ================= get motion correction offsets ========================
+    # mc_path = os.path.join(folder_noisy, exp_id, f'{exp_id}_rigid_motion_transform.csv')
+    # mc_df = pd.read_csv(mc_path)
+    # mc_x = np.array(mc_df['x'], dtype=np.int)
+    # mc_y = np.array(mc_df['y'], dtype=np.int)
+    # mc_corr = np.array(mc_df['correlation'])
+    # plane_dict.update({
+    #     'motion_correction_x' : mc_x,
+    #     'motion_correction_y' : mc_y,
+    #     'motion_correction_corr' : mc_corr
+    #     })
+    # ================= get motion correction offsets ========================
+
+    # ================= get roi list ========================
+    roi_json_path = ft.look_for_unique_file(
+        source=folder_rois,
+        identifiers=[exp_id],
+        file_type='json',
+        is_full_path=True)
+    roi_list, roi_id_list = get_roi_mask_list_from_pipeline_json(roi_json_path)
+    plane_dict.update({
+        'roi_list' : roi_list,
+        'roi_id_list': [f'{exp_id}_{r:04d}' for r in roi_id_list]
+        })
+    # print('cccc')
+    # ================= get roi list ========================
+
+
+    # ================= noise traces ========================
+    if not roi_list: # zero-roi plane
+        roi_ids = []
+        traces_noisy_raw = []
+        traces_noisy_neuropil = []
+        traces_noisy_demixed = []
+        traces_noisy_subtracted = []
+        traces_noisy_dff = []
+        rs = []
+        rmses = []
+        num_frame_small_baseline = []
+        dff_sigmas = []
+
+    else: 
+        # the true roi ids in the right order to be checked
+        roi_ids_target = np.array([int(r[-4:]) for r in plane_dict['roi_id_list']])
+        
+        # get raw noisy traces
+        trace_noisy_raw_path = os.path.join(
+            folder_noisy_trace_raw, exp_id, 'roi_traces.h5')
+        roi_ids, traces_noisy_raw = get_traces_from_pipeline_h5(trace_noisy_raw_path)
+        assert(np.array_equal(roi_ids, roi_ids_target))
+        # print('dddd')
+
+        # get neuropil noisy traces
+        trace_noisy_neuropil_path = os.path.join(
+            folder_noisy_trace_raw, exp_id, 'neuropil_traces.h5')
+        roi_ids, traces_noisy_neuropil = get_traces_from_pipeline_h5(trace_noisy_neuropil_path)
+        assert(np.array_equal(roi_ids, roi_ids_target))
+        # print('eeee')
+
+        # get demixed noisy traces
+        trace_noisy_demixed_path = os.path.join(
+            folder_noisy_trace_demixed, exp_id, f'{exp_id}_demixed_traces.h5')
+        roi_ids, traces_noisy_demixed = get_traces_from_pipeline_h5(trace_noisy_demixed_path)
+        assert(np.array_equal(roi_ids, roi_ids_target))
+        # print('ffff')
+
+        # get subtract noisy traces
+        trace_noisy_subtracted_path = os.path.join(
+            folder_noisy_trace_subtracted, exp_id, 'neuropil_correction.h5')
+        roi_ids, traces_noisy_subtracted, rs, rmses \
+            = get_neuropil_subtracted_traces_from_pipeline_h5(trace_noisy_subtracted_path)
+        assert(np.array_equal(roi_ids, roi_ids_target))
+        # print('gggg')
+
+        # get dff traces
+        trace_noisy_dff_path = os.path.join(
+            folder_noisy_trace_dff, exp_id, f'{exp_id}_dff.h5')
+        roi_ids, traces_noisy_dff, num_frame_small_baseline, dff_sigmas \
+            = get_dff_traces_from_pipeline_h5(trace_noisy_dff_path)
+        assert(np.array_equal(roi_ids, roi_ids_target))
+        # print('hhhh')
+
+    plane_dict.update({
+        'traces_noisy_raw': traces_noisy_raw,
+        'traces_noisy_neuropil': traces_noisy_neuropil,
+        'traces_noisy_demixed': traces_noisy_demixed,
+        'traces_noisy_subtracted': traces_noisy_subtracted,
+        'traces_noisy_dff': traces_noisy_dff,
+        'subtraction_r': rs,
+        'subtraction_rmse': rmses,
+        'dff_frame_num_small_baseline': num_frame_small_baseline,
+        'dff_sigma': dff_sigmas
+        })
+    # ================= noise traces ========================
+
+    return plane_dict
+
+
+def add_rois_and_traces_to_nwb_other_mice(nwb_f, plane_n, plane_dict,
+    ts_path='/acquisition/timeseries/digital_2p_vsync_rise/timestamps'):
+    """
+    add rois and traces information of a particular imaging plane 
+    to nwb
+
+    Parameters
+    ----------
+    nwb_f : NeuroAnalysisTools.NwbTools.RecordedFile object
+
+    plane_n : str, 'plane0', 'plane1', ...
+
+    plane_dict : dictionary, containing all the rois and traces 
+        information of this imaging plane.
+
+    ts_path : str, path in nwb_f to the imaging acquisition timestamps
+
+    Returns
+    -------
+    None 
+    """
+
+    # get sync imaging acquisition timestamps
+    plane_num = plane_dict['plane_num']
+    ts_all = nwb_f.file_pointer[ts_path][()]
+    plane_i = int(plane_n[-1])
+    ts_plane = ts_all[plane_i::plane_num]
+
+    traces_noisy_raw = plane_dict['traces_noisy_raw']
+    traces_noisy_neuropil = plane_dict['traces_noisy_neuropil']
+    traces_noisy_demixed = plane_dict['traces_noisy_demixed']
+    traces_noisy_subtracted = plane_dict['traces_noisy_subtracted']
+    traces_noisy_dff = plane_dict['traces_noisy_dff']
+
+    if (len(plane_dict['roi_list']) > 0) and (len(ts_plane) != traces_noisy_raw.shape[1]):
+        
+        print('\tnumber of data points ({}) does not match number of timestamps '
+              '({})'.format(traces_noisy_raw.shape[1], len(ts_plane)))
+        
+        ts_num = min([traces_noisy_raw.shape[1], len(ts_plane)])
+        ts_plane = ts_plane[:ts_num]
+        traces_noisy_raw = traces_noisy_raw[:, :ts_num]
+        traces_noisy_neuropil = traces_noisy_neuropil[:, :ts_num]
+        traces_noisy_demixed = traces_noisy_demixed[:, :ts_num]
+        traces_noisy_subtracted = traces_noisy_subtracted[:, :ts_num]
+        traces_noisy_dff = traces_noisy_dff[:, :ts_num]
+
+    print('\tadding segmentation results ...')
+    rt_mo = nwb_f.create_module(f'rois_and_traces_{plane_n}')
+    rt_mo.set_value('imaging_depth_micron', plane_dict['depth'])
+    rt_mo.set_value('experiment_id', plane_dict['experiment'])
+    # rt_mo.set_value('motion_correction_x', plane_dict['motion_correction_x'])
+    # rt_mo.set_value('motion_correction_y', plane_dict['motion_correction_y'])
+    # rt_mo.set_value('motion_correction_corr', plane_dict['motion_correction_corr'])
+
+    is_if = rt_mo.create_interface('ImageSegmentation')
+    is_if.create_imaging_plane('imaging_plane', description='')
+    is_if.add_reference_image('imaging_plane', 'max_projection_raw', 
+        plane_dict['projection_max_noisy'])
+    is_if.add_reference_image('imaging_plane', 'mean_projection_raw', 
+        plane_dict['projection_avg_noisy'])
+    is_if.add_reference_image('imaging_plane', 'max_projection_denoised',
+        plane_dict['projection_max_denoised'])
+    is_if.add_reference_image('imaging_plane', 'mean_projection_denoised',
+        plane_dict['projection_avg_denoised'])
+    is_if.add_reference_image('imaging_plane', 'correlation_projection_denoised',
+        plane_dict['projection_cor_denoised'])
+    is_if.set_value('pipeline_roi_names', plane_dict['roi_id_list'])
+    is_if.set_value('img_height', 512)
+    is_if.set_value('img_width', 512)
+    is_if.set_value('description', 'raw movie was denoised by deepinterpolation and then segmented by Suite2p, ' \
+                                   'from Suite2p results, only binary roi masks were saved here.')
+
+    for i, roi in enumerate(plane_dict['roi_list']):
+        roi_n = f'roi_{i:04d}'
+        pixels_yx = roi.get_pixel_array()
+        pixels_xy = pixels_yx[:, ::-1].transpose()
+        desc = plane_dict['roi_id_list'][i]
+        is_if.add_roi_mask_pixels(image_plane='imaging_plane', roi_name=roi_n, desc=desc,
+            pixel_list=pixels_xy, weights=np.ones(len(plane_dict['roi_list']), dtype=np.uint8), 
+            width=512, height=512)
+
+    is_if.finalize()
+
+    if len(plane_dict['roi_list']) == 0: # zero-roi plane 
+
+        trace_f_if = rt_mo.create_interface('Fluorescence')
+        seg_if_path = '/processing/rois_and_traces_' + plane_n + '/ImageSegmentation/imaging_plane'
+
+        print('\tadding traces raw')
+        trace_raw_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw')
+        trace_raw_ts.set_data(np.array([[np.nan]]), unit='au', conversion=np.nan, resolution=np.nan)
+        trace_raw_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_raw_ts.set_description('fluorescence traces extracted from each roi, from raw movie')
+        trace_raw_ts.set_time(np.array([np.nan]))
+        trace_raw_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_raw_ts.set_value('roi_names', ['no_roi'])
+        trace_raw_ts.set_value('num_samples', 0)
+        trace_f_if.add_timeseries(trace_raw_ts)
+        trace_raw_ts.finalize()
+
+        roi_n_path = f'/processing/rois_and_traces_{plane_n}/Fluorescence/f_raw/roi_names'
+
+        print('\tadding traces neuropil')
+        trace_sur_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw_neuropil')
+        trace_sur_ts.set_data(np.array([[np.nan]]), unit='au', conversion=np.nan, resolution=np.nan)
+        trace_sur_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_sur_ts.set_description('neuropil traces extracted from the surroud region of each roi, ' \
+                                     'from raw movie. This timeseries links to the roi segmentation ' \
+                                     'not the actual neuropil segmentation')
+        trace_sur_ts.set_time(np.array([np.nan]))
+        trace_sur_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_sur_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_sur_ts.set_value('num_samples', 0)
+        trace_f_if.add_timeseries(trace_sur_ts)
+        trace_sur_ts.finalize()
+
+        print('\tadding traces demixed')
+        trace_demix_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw_demixed')
+        trace_demix_ts.set_data(np.array([[np.nan]]), unit='au', conversion=np.nan, resolution=np.nan)
+        trace_demix_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_demix_ts.set_description('demixed traces for each roi, from raw movie')
+        trace_demix_ts.set_time(np.array([np.nan]))
+        trace_demix_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_demix_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_demix_ts.set_value('num_samples', 0)
+        trace_f_if.add_timeseries(trace_demix_ts)
+        trace_demix_ts.finalize()
+
+        print('\tadding traces neuropil subtracted')
+        trace_sub_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw_subtracted')
+        trace_sub_ts.set_data(np.array([[np.nan]]), unit='au', conversion=np.nan, resolution=np.nan)
+        trace_sub_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_sub_ts.set_description('dimxed and neuropil subtracted traces for each roi, from raw movie')
+        trace_sub_ts.set_time(np.array([np.nan]))
+        trace_sub_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_sub_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_sub_ts.set_value('num_samples', 0)
+        trace_sub_ts.set_value('neuropil_subtraction_r', plane_dict['subtraction_r'])
+        trace_sub_ts.set_value('neuropil_subtraction_rmse', plane_dict['subtraction_rmse'])
+        trace_sub_ts.set_comments('value "r": neuropil contribution ratio for each roi. '
+                                  'value "rmse": RMS error of neuropil subtraction for each roi')
+        trace_f_if.add_timeseries(trace_sub_ts)
+        trace_sub_ts.finalize()
+
+        trace_f_if.finalize()
+
+
+        print('\tadding global dF/F traces for each roi')
+        trace_dff_if = rt_mo.create_interface('DfOverF')
+
+        trace_dff_ts = nwb_f.create_timeseries('RoiResponseSeries', 'dff_raw')
+        trace_dff_ts.set_data(np.array([[np.nan]]), unit='au', conversion=np.nan, resolution=np.nan)
+        trace_dff_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_dff_ts.set_description('global daf/f traces for each roi center, input fluorescence is the trace after demixing'
+                                     ' and neuropil subtraction. global daf/f is calculated by '
+                                     'allensdk.brain_observatory.dff.compute_dff() function.')
+        trace_dff_ts.set_time(np.array([np.nan]))
+        trace_dff_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_dff_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_dff_ts.set_value('num_samples', 0)
+        trace_dff_ts.set_value('num_frame_small_baseline', np.array([]))
+        trace_dff_ts.set_value('sigma', np.array([]))
+        trace_dff_if.add_timeseries(trace_dff_ts)
+        trace_dff_ts.finalize()
+        trace_dff_if.finalize()
+
+        rt_mo.finalize()
+    
+    else:
+
+        trace_f_if = rt_mo.create_interface('Fluorescence')
+        seg_if_path = '/processing/rois_and_traces_' + plane_n + '/ImageSegmentation/imaging_plane'
+
+        print('\tadding traces raw')
+        trace_raw_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw')
+        trace_raw_ts.set_data(traces_noisy_raw, unit='au', conversion=np.nan, resolution=np.nan)
+        trace_raw_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_raw_ts.set_description('fluorescence traces extracted from each roi, from raw movie')
+        trace_raw_ts.set_time(ts_plane)
+        trace_raw_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        roi_names = [f'roi_{ind:04d}' for ind in range(traces_noisy_raw.shape[0])]
+        trace_raw_ts.set_value('roi_names', roi_names)
+        trace_raw_ts.set_value('num_samples', traces_noisy_raw.shape[1])
+        trace_f_if.add_timeseries(trace_raw_ts)
+        trace_raw_ts.finalize()
+
+        roi_n_path = f'/processing/rois_and_traces_{plane_n}/Fluorescence/f_raw/roi_names'
+
+        print('\tadding traces neuropil')
+        trace_sur_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw_neuropil')
+        trace_sur_ts.set_data(traces_noisy_neuropil, unit='au', conversion=np.nan, resolution=np.nan)
+        trace_sur_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_sur_ts.set_description('neuropil traces extracted from the surroud region of each roi, ' \
+                                     'from raw movie. This timeseries links to the roi segmentation ' \
+                                     'not the actual neuropil segmentation')
+        trace_sur_ts.set_time(ts_plane)
+        trace_sur_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_sur_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_sur_ts.set_value('num_samples', traces_noisy_neuropil.shape[1])
+        trace_f_if.add_timeseries(trace_sur_ts)
+        trace_sur_ts.finalize()
+
+        print('\tadding traces demixed')
+        trace_demix_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw_demixed')
+        trace_demix_ts.set_data(traces_noisy_demixed, unit='au', conversion=np.nan, resolution=np.nan)
+        trace_demix_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_demix_ts.set_description('demixed traces for each roi, from raw movie')
+        trace_demix_ts.set_time(ts_plane)
+        trace_demix_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_demix_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_demix_ts.set_value('num_samples', traces_noisy_demixed.shape[1])
+        trace_f_if.add_timeseries(trace_demix_ts)
+        trace_demix_ts.finalize()
+
+        print('\tadding traces neuropil subtracted')
+        trace_sub_ts = nwb_f.create_timeseries('RoiResponseSeries', 'f_raw_subtracted')
+        trace_sub_ts.set_data(traces_noisy_subtracted, unit='au', conversion=np.nan, resolution=np.nan)
+        trace_sub_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_sub_ts.set_description('dimxed and neuropil subtracted traces for each roi, from raw movie')
+        trace_sub_ts.set_time(ts_plane)
+        trace_sub_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_sub_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_sub_ts.set_value('num_samples', traces_noisy_subtracted.shape[1])
+        trace_sub_ts.set_value('neuropil_subtraction_r', plane_dict['subtraction_r'])
+        trace_sub_ts.set_value('neuropil_subtraction_rmse', plane_dict['subtraction_rmse'])
+        trace_sub_ts.set_comments('value "r": neuropil contribution ratio for each roi. '
+                                  'value "rmse": RMS error of neuropil subtraction for each roi')
+        trace_f_if.add_timeseries(trace_sub_ts)
+        trace_sub_ts.finalize()
+
+        trace_f_if.finalize()
+
+
+        print('\tadding global dF/F traces for each roi')
+        trace_dff_if = rt_mo.create_interface('DfOverF')
+
+        trace_dff_ts = nwb_f.create_timeseries('RoiResponseSeries', 'dff_raw')
+        trace_dff_ts.set_data(traces_noisy_dff, unit='au', conversion=np.nan, resolution=np.nan)
+        trace_dff_ts.set_value('data_format', 'roi (row) x time (column)')
+        trace_dff_ts.set_description('global daf/f traces for each roi center, input fluorescence is the trace after demixing'
+                                     ' and neuropil subtraction. global daf/f is calculated by '
+                                     'allensdk.brain_observatory.dff.compute_dff() function.')
+        trace_dff_ts.set_time(ts_plane)
+        trace_dff_ts.set_value_as_link('segmentation_interface', seg_if_path)
+        trace_dff_ts.set_value_as_link('roi_names', roi_n_path)
+        trace_dff_ts.set_value('num_samples', traces_noisy_dff.shape[1])
+        trace_dff_ts.set_value('num_frame_small_baseline', plane_dict['dff_frame_num_small_baseline'])
+        trace_dff_ts.set_value('sigma', plane_dict['dff_sigma'])
+        trace_dff_if.add_timeseries(trace_dff_ts)
+        trace_dff_ts.finalize()
+        trace_dff_if.finalize()
+
+        rt_mo.finalize()
+
 
