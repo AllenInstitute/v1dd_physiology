@@ -491,7 +491,7 @@ def get_plane_traces(nwb_f, plane_n, trace_type):
 
     traces = trace_grp['data'][()]
     trace_ts = trace_grp['timestamps'][()]
-
+    
     assert(traces.shape[1] == trace_ts.shape[0])
 
     return traces, trace_ts

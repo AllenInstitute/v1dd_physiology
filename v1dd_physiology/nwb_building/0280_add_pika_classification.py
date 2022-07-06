@@ -5,7 +5,7 @@ import NeuroAnalysisTools.core.FileTools as ft
 
 pred_path = r"\\allen\programs\mindscope\workgroups\surround" \
             r"\v1dd_in_vivo_new_segmentation\classifier_results" \
-            r"\mouse_409828_preds.csv"
+            r"\classifications.csv"
 
 nwb_folder = r"\\allen\programs\mindscope\workgroups\surround" \
            r"\v1dd_in_vivo_new_segmentation\data\nwbs"    
@@ -18,7 +18,7 @@ print(df_pred)
 
 nwb_paths = ft.look_for_file_list(
     source=nwb_folder,
-    identifiers=['M409828'],
+    identifiers=[],
     file_type='nwb',
     is_full_path=True)
 nwb_paths.sort()
@@ -48,21 +48,31 @@ for nwb_i, nwb_p in enumerate(nwb_paths):
         plane_grp = nwb_f[f'processing/rois_and_traces_{plane_n}']
         exp_id = plane_grp['experiment_id'][()].decode()
         print(f'\t{plane_n}: {exp_id}')
-        roi_names_p = plane_grp['ImageSegmentation/pipeline_roi_names']
-        roi_names = plane_grp['ImageSegmentation/imaging_plane/roi_list']
 
-        df_pred_plane = df_pred[df_pred['experiment_id'] == int(exp_id)].copy()
-        df_pred_plane = df_pred_plane.sort_values(by='roi_id')
+        if 'roi_list' in plane_grp['ImageSegmentation/imaging_plane']:
 
-        assert(df_pred_plane.shape[0] == len(roi_names) == len(roi_names_p))
+            roi_names_p = plane_grp['ImageSegmentation/pipeline_roi_names']
+            roi_names = plane_grp['ImageSegmentation/imaging_plane/roi_list']
 
-        pika_score = np.array(df_pred_plane['y_score'])
-        pika_pred = np.array(df_pred_plane['y_pred'] == 'cell')
+            df_pred_plane = df_pred[df_pred['experiment_id'] == int(exp_id)].copy()
+            df_pred_plane = df_pred_plane.sort_values(by='roi_id')
+
+            assert(df_pred_plane.shape[0] == len(roi_names) == len(roi_names_p))
+
+            pika_score = np.array(df_pred_plane['y_score'])
+            pika_pred = np.array(df_pred_plane['y_pred'] == 'cell')
+        
+        else: # no roi
+
+            roi_names_p = np.array([])
+            roi_names = np.array([])
+            pika_sciore = np.array([])
+            pika_pred = np.array([])
 
         pika_plane_grp = pika_grp.create_group(plane_n)
         pika_plane_grp['pipeline_roi_names'] = roi_names_p
         pika_plane_grp['roi_names'] = roi_names
-        dset_score = pika_plane_grp.create_dataset('score', data=pika_score)
-        dset_pred = pika_plane_grp.create_dataset('prediction', data=pika_pred)
-        dset_pred.attrs['threshold'] = 0.5
+        pika_plane_grp['score'] = pika_score
+        pika_plane_grp['prediction'] = pika_pred
+        pika_plane_grp['prediction'].attrs['threshold'] = 0.5
 
