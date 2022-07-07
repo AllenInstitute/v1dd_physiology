@@ -24,6 +24,6 @@ a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 
 python_path="/home/junz/anaconda3/envs/v1dd/bin/python"
 script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/response_matrix_building/0080_get_greedy_rf_slurm.py"
-echo "Add strf events to response table ..."
+echo "Add greedy rf dff to response table ..."
 "$python_path" "$script_path"  $a1 dff
 date

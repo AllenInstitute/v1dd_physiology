@@ -15,7 +15,7 @@ The workflow is the run the list of scripts in order to build the database step 
  * `0045_remove_problematic_nwbs_3p.py` remove "M427836\_1e" and "M427836_1f" sessions, since their stimulus table can not be found from Reza Abbasi Asl's preprocessing folder.
  * `0120_get_stim_table_path.py` get the path to the stimulus table from Reza Abbasi Asl's preprocessing folder for each session.
  * `0130_conver_stimulus_table.py` convert the stimulus table (in the format of python2 pickle file) into hdf5 format.
- * the `*add_rois_and_traces*` and `*event_detection*` scripts can be run on slurm server by running the correspondent .sh shell script on "hpc-login".
+ * the scripts that have `_slurm` surfix can be run on slurm server by running the correspondent .sh shell script on "hpc-login".
  * the `utils` file contains many functions which are called by the scripts in this folder.
 
 

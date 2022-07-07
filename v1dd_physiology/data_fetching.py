@@ -264,66 +264,6 @@ def get_scope_type(nwb_f):
         raise LookupError("Do not understand imaging device.")
 
 
-def get_projection_images(nwb_f, plane_n, is_plot=False):
-    """
-    return mean projection and max projection of a given imaging plane
-
-    Parameters
-    ----------
-    nwb_f : hdf5 File object
-        should be in read-only mode
-    plane_n : string
-        "plane0", "plane1", ...
-    is_plot : bool
-
-    Returns
-    -------
-    mean_proj : 2d array
-        mean projection 
-    max_proj : 2d array
-        max projection
-    """
-
-    if nwb_f.mode != 'r':
-        raise OSError('The nwb file should be opened in read-only mode.')
-
-    mean_proj = nwb_f['/processing/rois_and_traces_{}/ImageSegmentation' \
-                      '/imaging_plane/reference_images/mean_projection' \
-                      '/data'.format(plane_n)][()]
-    max_proj = nwb_f['/processing/rois_and_traces_{}/ImageSegmentation' \
-                      '/imaging_plane/reference_images/max_projection' \
-                      '/data'.format(plane_n)][()]
-    nwb_f.close()
-
-    if is_plot:
-        sl = 2 # plot saturation level [0-100]
-        f = plt.figure(figsize=(10, 5))
-        f.suptitle(plane_n)
-        ax0 = f.add_subplot(121)
-        ax0.set_title('mean_projection')
-        ax0.set_axis_off()
-        ax0.imshow(
-            mean_proj, 
-            vmin=np.percentile(mean_proj[:], sl),
-            vmax=np.percentile(mean_proj[:], 100-sl), 
-            cmap='gray', 
-            interpolation='nearest'
-            )
-
-        ax1 = f.add_subplot(122)
-        ax1.set_title('max_projection')
-        ax1.set_axis_off()
-        ax1.imshow(
-            max_proj, 
-            vmin=np.percentile(max_proj[:], sl),
-            vmax=np.percentile(max_proj[:], 100-sl), 
-            cmap='gray', 
-            interpolation='nearest'
-            )
-
-    return mean_proj, max_proj
-
-
 def get_vasculature_map(nwb_f,  type='wf', is_standard='False'):
     """
     get vasculature map of a particular session

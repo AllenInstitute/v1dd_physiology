@@ -11,8 +11,8 @@
 #SBATCH --mail-type=END,FAIL                # Mail events (NONE, BEGIN, END, FAIL, ALL)
 
 # %A" is replaced by the job ID and "%a" with the array index
-#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_greedy_rf_dff_%A_%a.out
-#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_greedy_rf_dff_%A_%a.err
+#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_greedy_rf_event_%A_%a.out
+#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_greedy_rf_event_%A_%a.err
 
 pwd; hostname; date
 
@@ -24,6 +24,6 @@ a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 
 python_path="/home/junz/anaconda3/envs/v1dd/bin/python"
 script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/response_matrix_building/0080_get_greedy_rf_slurm.py"
-echo "Add strf events to response table ..."
+echo "Add greedy rf events to response table ..."
 "$python_path" "$script_path"  $a1 events
 date
