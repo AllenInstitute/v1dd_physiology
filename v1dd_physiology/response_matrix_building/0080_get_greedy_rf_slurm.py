@@ -22,9 +22,13 @@ alphas = [0.05, 0.1]
 grid_size = 9.3
 gray_level = 0
 
-template_path = r"\\allen\programs\mindscope\workgroups\surround" \
-                r"\v1dd_in_vivo_new_segmentation\data\stim_movies" \
-                r"\stim_locally_sparse_nois_16x28_displayed.tif"
+# template_path = r"\\allen\programs\mindscope\workgroups\surround" \
+#                 r"\v1dd_in_vivo_new_segmentation\data\stim_movies" \
+#                 r"\stim_locally_sparse_nois_16x28_displayed.tif"
+
+template_path = "/allen/programs/mindscope/workgroups/surround" \
+                "/v1dd_in_vivo_new_segmentation/data/stim_movies" \
+                "/stim_locally_sparse_nois_16x28_displayed.tif"
 
 template = tf.imread(template_path)
 azis = (np.arange(template.shape[2]) - ((template.shape[2] - 1) / 2)) * grid_size
@@ -48,9 +52,9 @@ for alpha in alphas:
         del rm_f[alpha_grp_n]
     alpha_grp = rm_f.create_group(alpha_grp_n)
 
-    for plane_n in plane_ns:
+    for plane_i, plane_n in enumerate(plane_ns):
 
-        print(f'\t\t{plane_n}  ...')
+        print(f'\t\t{plane_n}, {plane_i + 1} / {len(plane_ns)}  ...')
 
         stim_table = nwb_f['stimulus/presentation/locally_sparse_noise/data'][()]
         stim_table = pd.DataFrame(data=stim_table, columns=('start_ts', 'end_ts', 'frame'))
@@ -85,9 +89,10 @@ for alpha in alphas:
             rfs_on = []
             rfs_off = []
 
-            for roi_n in roi_ns:
-
-                print(f'\t\t\t{roi_n}')
+            for roi_i, roi_n in enumerate(roi_ns):
+                
+                if roi_i % 50 == 0:
+                    print(f'\t\t\t{roi_n}, {roi_i + 1} / {len(roi_ns)}.')
 
                 trace, _ = daf.get_single_trace(nwb_f=nwb_f, plane_n=plane_n, 
                     roi_n=roi_n, trace_type=trace_type)
