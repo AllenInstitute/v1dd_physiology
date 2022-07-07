@@ -584,9 +584,15 @@ def get_roi_ns(nwb_f, plane_n):
     if nwb_f.mode != 'r':
         raise OSError('The nwb file should be opened in read-only mode.')
 
+    # roi_ns = nwb_f[f'processing/rois_and_traces_{plane_n}'
+    #                f'/ImageSegmentation/imaging_plane/roi_list'][()]
+    # roi_ns = [r.decode() for r in roi_ns]
+    # roi_ns.sort()
+
     roi_ns = nwb_f[f'processing/rois_and_traces_{plane_n}'
-                   f'/ImageSegmentation/imaging_plane/roi_list'][()]
-    roi_ns = [r.decode() for r in roi_ns]
+                   f'/ImageSegmentation/imaging_plane'].keys()
+    roi_ns = [r for r in roi_ns if r.startswith('roi_')]
+    roi_ns = [r for r in roi_ns if not r.endswith('_list')]
     roi_ns.sort()
     
     return roi_ns
@@ -937,6 +943,37 @@ def get_lsn_onset_times(nwb_f):
 
 
 # ==================== FETCHING DATA FROM RESPONSE METRICS FILES =========================
+
+def get_rm_path(nwb_f):
+    """
+    given the nwb file object, return the path to the 
+    corresponding response matrix file path 
+
+    Parameters
+    ----------
+    nwb_f : hdf5 File object
+        should be in read-only mode
+
+    Returns
+    -------
+    rm_path : string
+        path to the corresponding response matrix file
+    """
+
+    if nwb_f.mode != 'r':
+        raise OSError('The nwb file should be opened in read-only mode.')
+
+    nwb_folder, nwb_fn = os.path.split(nwb_f.filename)
+    base_folder = os.path.split(nwb_folder)[0]
+
+    rm_path = os.path.join(
+        base_folder, 
+        'response_matrices', 
+        f'response_matrix_{nwb_fn[0:10]}.hdf5')
+    
+    return rm_path
+
+
 
 
 # ==================== FETCHING DATA FROM RESPONSE METRICS FILES =========================
