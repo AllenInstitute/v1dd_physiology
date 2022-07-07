@@ -25,7 +25,7 @@ A recorded video introducing this database can be found [here](https://alleninst
 
 #### Install volume_imaging_2P_analysis  
 ```
-> pip install v1dd_physiology
+> pip install v1dd-physiology
 ```  
   
 or  
