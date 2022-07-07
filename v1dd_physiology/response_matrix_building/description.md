@@ -12,4 +12,6 @@ Response matrices are only extracted from dF/F and events traces.
 
   1. run `0010_get_strf_slurm.py` on slurm cluster
   2. run `0060_get_dgcrm_w_slurm.sh` on slurm cluster
-  3. run `0070_get_dgcrm_f_slurm.sh.sh` on slurm cluster
+  3. run `0070_get_dgcrm_f_slurm.sh` on slurm cluster
+  4. run `0090_get_greedy_rf_dff_slurm.sh` on slurm cluster
+  5. run `0100_get_greedy_rf_events_slurm.sh` on slurm cluster
