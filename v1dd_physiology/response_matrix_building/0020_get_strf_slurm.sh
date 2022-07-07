@@ -11,18 +11,12 @@
 #SBATCH --mail-type=END,FAIL                # Mail events (NONE, BEGIN, END, FAIL, ALL)
 
 # %A" is replaced by the job ID and "%a" with the array index
-#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_event_%A_%a.out
-#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_event_%A_%a.err
+#SBATCH -o /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_strf_dff_%A_%a.out
+#SBATCH -e /allen/programs/mindscope/workgroups/surround/jun_testing/slurm_output/add_strf_dff_%A_%a.err
 
 pwd; hostname; date
 
 search_dir=/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/data/nwbs
-
-# nwb_list=("$search_dir"/M409828*.nwb)
-# nwb_list=("$search_dir"/M416296*.nwb)
-# nwb_list=("$search_dir"/M427836*.nwb)
-# nwb_list=("$search_dir"/M438833*.nwb)
-
 nwb_list=("$search_dir"/*.nwb)
 # echo "${nwb_list[@]}"
 
@@ -31,8 +25,8 @@ nwb_list=("$search_dir"/*.nwb)
 
 a1=${nwb_list[`expr $SLURM_ARRAY_TASK_ID`]}
 
-python_path="/home/junz/anaconda3/envs/analysis/bin/python"
-script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/nwb_building/0260_add_events_slurm.py"
-echo "Add l0-event to nwb ..."
+python_path="/home/junz/anaconda3/envs/v1dd/bin/python"
+script_path="/allen/programs/mindscope/workgroups/surround/v1dd_in_vivo_new_segmentation/v1dd_physiology/v1dd_physiology/response_matrix_building/0010_get_strf_slurm.py"
+echo "Add strf dff to response table ..."
 "$python_path" "$script_path"  $a1
 date

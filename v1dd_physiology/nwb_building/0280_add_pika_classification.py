@@ -66,7 +66,7 @@ for nwb_i, nwb_p in enumerate(nwb_paths):
 
             roi_names_p = np.array([])
             roi_names = np.array([])
-            pika_sciore = np.array([])
+            pika_score = np.array([])
             pika_pred = np.array([])
 
         pika_plane_grp = pika_grp.create_group(plane_n)
