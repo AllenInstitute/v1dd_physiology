@@ -11,19 +11,19 @@ The example for using this package can be found in these [ipython notebooks](htt
 
 A recorded video introducing this database can be found [here](https://alleninstitute.sharepoint.com/sites/TheBrainObservatoryAnalysisSuperTeam/Shared%20Documents/General/Recordings/Group%20Meeting-20220701_120405-Meeting%20Recording.mp4?web=1) or as a mp4 file: `\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\v1dd_physiology_intro_JunZhuang-20220701.mp4`
 
-&nbsp;
-## Special dependency
- * [NeuroAnalysisTools](https://github.com/zhuangjun1981/NeuroAnalysisTools)  
+&nbsp;  
+## Special dependency  
+* [NeuroAnalysisTools](https://github.com/zhuangjun1981/NeuroAnalysisTools)  
 
-&nbsp;
-## Install
-#### Create environment
+&nbsp;  
+## Install  
+#### Create environment  
 ```
 > conda create -n v1dd python=3
 > conda activate v1dd
 ```
 
-#### Install volume_imaging_2P_analysis
+#### Install volume_imaging_2P_analysis  
 ```
 > pip install v1dd_physiology
 ```  
