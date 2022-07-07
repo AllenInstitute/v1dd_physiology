@@ -1,8 +1,11 @@
 import os, h5py
 import numpy as np
 import NeuroAnalysisTools.core.FileTools as ft
+import NeuroAnalysisTools.SingleCellAnalysis as sca
+
 
 db_path = r"\\allen\programs\mindscope\workgroups\surround\v1dd_in_vivo_new_segmentation\data"
+
 
 # ========================== FETCHING DATA FROM NWB FILES ================================
 
@@ -914,6 +917,209 @@ def get_rm_path(nwb_f):
     return rm_path
 
 
+def get_session_id_from_rmf(rm_f):
+    """
+    return 10-character session id from response matrix file
+
+    Parameters
+    ----------
+    rm_f : hdf5 File object
+        response matrix file, should be in read-only mode
+
+    Returns
+    -------
+    sess_id : 10-character string
+        e.g., 'M409828_11'
+    """
+    if rm_f.mode != 'r':
+        raise OSError('The response matrix file should be opened in read-only mode.')
+
+    rm_fn = os.path.split(rm_f.filename)[1]
+    return rm_fn[16:26]
+
+
+def get_strf(rm_f, plane_n, roi_n, trace_type='events'):
+    """
+    get spatial temporal receptive field of a given roi defined by 
+    response matrix file, plane_n, and roi_n.
+
+    Parameters
+    ----------
+    rm_f : hdf5 File object
+        response matrix file, should be in read-only mode
+
+    plane_n : 6-character string
+        plane name, e.g., 'plane0', 'plane1', ...
+
+    roi_n : 8-character string
+        roi name, e.g., 'roi_0000', 'roi_0100', ....
+
+    trace_type : string
+        type of response to be extracted, should be either 'dff' or 'events'
+
+    Returns
+    -------
+    strf : NeuroAnalysisTools.SingleCellAnalysis.SpatialTemporalReceptiveField
+    object
+        spatial temporal receptive field of the defined roi.
+    """
+
+    if rm_f.mode != 'r':
+        raise OSError('The response matrix file should be opened in read-only mode.')
+
+    roi_ind = int(roi_n[-4:])
+    sess_id = get_session_id_from_rmf(rm_f)
+
+    h5_grp = rm_f[f'strf/{plane_n}']
+    
+    if trace_type in ['dff', 'events']:
+    
+        sta_ts = h5_grp.attrs['sta_timestamps']
+
+        probe_ns = list(h5_grp.keys())
+        probe_ns.sort()
+
+        locations = []
+        signs = []
+        traces = []
+        trigger_ts = []
+
+        for probe_i, probe_n in enumerate(probe_ns):
+
+            locations.append([float(probe_n[3:9]), float(probe_n[13:19])])
+            signs.append(int(probe_n[24:26]))
+
+            traces.append(h5_grp[f'{probe_n}/sta_{trace_type}'][roi_ind, :, :])
+            trigger_ts.append(h5_grp[f'{probe_n}'].attrs['global_trigger_timestamps'])
+
+        return sca.SpatialTemporalReceptiveField(
+            locations=locations, signs=signs, traces=traces, time=sta_ts,
+            trigger_ts=trigger_ts, name=f'{sess_id}_{plane_n}_{roi_n}',
+            locationUnit='degree', trace_data_type=f'sta_{trace_type}')
+    
+    else:
+        raise LookupError('Do not under stand "trace_type", should be "dff" of "events".')
+
+
+def get_greedy_rf(rm_f, plane_n, roi_n, trace_type='events', alpha='0.100'):
+    """
+    get greedy pixel-wise receptive field of a given roi defined by 
+    response matrix file, plane_n, and roi_n.
+
+    Parameters
+    ----------
+    rm_f : hdf5 File object
+        response matrix file, should be in read-only mode
+
+    plane_n : 6-character string
+        plane name, e.g., 'plane0', 'plane1', ...
+
+    roi_n : 8-character string
+        roi name, e.g., 'roi_0000', 'roi_0100', ....
+
+    trace_type : string
+        type of response to be extracted, should be either 'dff' or 'events'
+
+    alpha : 5-character string
+        significance level, should be '0.100' or '0.050'
+
+    Returns
+    -------
+    greedy_rf_on : NeuroAnalysisTools.SingleCellAnalysis.SpatialReceptiveField
+    object
+    
+    greedy_rf_off : NeuroAnalysisTools.SingleCellAnalysis.SpatialReceptiveField
+    object
+    """
+    
+    if rm_f.mode != 'r':
+        raise OSError('The response matrix file should be opened in read-only mode.')
+    
+    if alpha not in ['0.100', '0.050']:
+        raise LookupError(f"cannot understand parameter 'alpha' "
+                          f"({alpha}), should be '0.100' or '0.050'.")
+
+    if trace_type == 'dff':
+        h5_grp_key = f'greedy_rfs_1000ms_alpha{alpha}_{trace_type}/{plane_n}'
+    elif trace_type == 'events':
+        h5_grp_key = f'greedy_rfs_0500ms_alpha{alpha}_{trace_type}/{plane_n}'
+    else:
+        raise LookupError(f"cannot understand parameter 'trace_type' "
+                          f"({trace_type}), should be 'dff' or 'events'.")
+
+    # print(h5_grp_key)
+    h5_grp = rm_f[h5_grp_key]
+    roi_ind = int(roi_n[-4:])
+
+    alts_on = h5_grp['greedy_pixelwise_rfs_on'].attrs['alt_positions']
+    azis_on = h5_grp['greedy_pixelwise_rfs_on'].attrs['azi_positions']
+    map_on = h5_grp['greedy_pixelwise_rfs_on'][roi_ind, :, :]
+    assert (len(alts_on) == map_on.shape[0])
+    assert (len(azis_on) == map_on.shape[1])
+    rf_on = sca.SpatialReceptiveField(mask=map_on, altPos=alts_on, aziPos=azis_on,
+                                      sign='ON', dataType=trace_type)
+
+    alts_off = h5_grp['greedy_pixelwise_rfs_off'].attrs['alt_positions']
+    azis_off = h5_grp['greedy_pixelwise_rfs_off'].attrs['azi_positions']
+    map_off =h5_grp['greedy_pixelwise_rfs_off'][roi_ind, :, :]
+    assert (len(alts_off) == map_off.shape[0])
+    assert (len(azis_off) == map_off.shape[1])
+    rf_off = sca.SpatialReceptiveField(mask=map_off, altPos=alts_off, aziPos=azis_off,
+                                       sign='OFF', dataType=trace_type)
+
+    return rf_on, rf_off
+
+
+def get_dgcrm(rm_f, plane_n, roi_n, trace_type='events', dgc_type='full'):
+    """
+    get drifting grating response matrix of a given roi defined by 
+    response matrix file, plane_n, and roi_n.
+
+    Parameters
+    ----------
+    rm_f : hdf5 File object
+        response matrix file, should be in read-only mode
+
+    plane_n : 6-character string
+        plane name, e.g., 'plane0', 'plane1', ...
+
+    roi_n : 8-character string
+        roi name, e.g., 'roi_0000', 'roi_0100', ....
+
+    trace_type : string
+        type of response to be extracted, should be either 'dff' or 'events'
+
+    dgc_type : string
+        type of drifting grating circle, should be 'full' of 'windowed'
+
+    Returns
+    -------
+    dgcrm : NeuroAnalysisTools.SingleCellAnalysis.DriftingGratingResponseMatrix
+    object
+        drifting gration response matrix of the defined roi.
+    """
+
+    if rm_f.mode != 'r':
+        raise OSError('The response matrix file should be opened in read-only mode.')
+    
+    roi_ind = int(roi_n[-4:])
+
+    if dgc_type in ['full', 'windowed']:
+            grp_n = f'responses_drifting_gratings_{dgc_type}/{plane_n}'
+    else:
+        raise LookupError(f"cannot understand parameter 'dgc_type' "
+                          f"({dgc_type}), should be 'full' or 'windowed'.")
+
+    h5_grp = rm_f[grp_n]
+
+    if trace_type in ['dff', 'events']:
+        dgcrm = sca.get_dgc_response_matrix_from_nwb(
+            h5_grp=h5_grp, roi_ind=roi_ind, trace_type=f'sta_{trace_type}')
+    else:
+        raise LookupError(f"cannot understand parameter 'trace_type' "
+                          f"({trace_type}), should be 'events' or 'dff'.")
+
+    return dgcrm
 
 
 # ==================== FETCHING DATA FROM RESPONSE METRICS FILES =========================
@@ -921,9 +1127,72 @@ def get_rm_path(nwb_f):
 
 if __name__ == "__main__":
 
+    
+    # # ========================================================================
+    # nwb_path = r"\\allen\programs\mindscope\workgroups\surround" \
+    #            r"\v1dd_in_vivo_new_segmentation\data\nwbs" \
+    #            r"\M427836_25_20190426.nwb"
+
+    # nwb_f = h5py.File(nwb_path, 'r')
+    # check_nwb_integrity(nwb_f=nwb_f, verbose=True)
+    # # ========================================================================
+
+
+    # # ========================================================================
+    # import matplotlib.pyplot as plt
+    # nwb_path = r"\\allen\programs\mindscope\workgroups\surround" \
+    #            r"\v1dd_in_vivo_new_segmentation\data\nwbs" \
+    #            r"\M427836_25_20190426.nwb"
+    # plane_n = 'plane3'
+    # roi_n = 'roi_0034'
+
+    # nwb_f = h5py.File(nwb_path, 'r')
+    # rm_path = get_rm_path(nwb_f=nwb_f)
+    # rm_f = h5py.File(rm_path, 'r')
+
+    # strf = get_strf(rm_f=rm_f, plane_n=plane_n, roi_n=roi_n, 
+    #     trace_type='dff')
+    # print(strf.name)
+    # strf.plot_traces(yRange=[0, 0.02])
+    # plt.show()
+
+    # dgcrm = get_dgcrm(rm_f=rm_f, plane_n=plane_n, roi_n=roi_n, 
+    #     trace_type='dff', dgc_type='windowed')
+    # # ========================================================================
+
+
+    # ========================================================================
+    import matplotlib.pyplot as plt
     nwb_path = r"\\allen\programs\mindscope\workgroups\surround" \
                r"\v1dd_in_vivo_new_segmentation\data\nwbs" \
-               r"\M427836_25_20190426.nwb"
+               r"\M409828_13_20181213.nwb"
+    plane_n = 'plane0'
 
     nwb_f = h5py.File(nwb_path, 'r')
-    check_nwb_integrity(nwb_f=nwb_f, verbose=True)
+    rm_path = get_rm_path(nwb_f=nwb_f)
+    rm_f = h5py.File(rm_path, 'r')
+
+    roi_n = 'roi_0086'
+
+    rf_on, rf_off = get_greedy_rf(rm_f=rm_f, plane_n=plane_n, roi_n=roi_n,
+        trace_type='events', alpha='0.100')
+    f, axs = plt.subplots(ncols=1, nrows=2, figsize=(6,8))
+    f.suptitle(roi_n)
+    rf_on.plot_rf2(plot_axis=axs[0], cmap='Reds')
+    rf_off.plot_rf2(plot_axis=axs[1], cmap='Blues')
+    plt.tight_layout()
+    plt.show()
+
+    # for i in range(100):
+
+    #     roi_n = f'roi_{i:04d}'
+
+    #     rf_on, rf_off = get_greedy_rf(rm_f=rm_f, plane_n=plane_n, roi_n=roi_n,
+    #         trace_type='events', alpha='0.100')
+    #     f, axs = plt.subplots(ncols=1, nrows=2, figsize=(6,8))
+    #     f.suptitle(roi_n)
+    #     rf_on.plot_rf2(plot_axis=axs[0], cmap='Reds')
+    #     rf_off.plot_rf2(plot_axis=axs[1], cmap='Blues')
+    #     plt.tight_layout()
+    #     plt.show()
+    # ========================================================================
