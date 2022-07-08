@@ -4,7 +4,7 @@ import NeuroAnalysisTools.NwbTools as nt
 import NeuroAnalysisTools.core.FileTools as ft
 
 event_folder = "//allen/programs/mindscope/workgroups/surround" \
-               "/jun_testing/event_detection"
+               "/v1dd_in_vivo_new_segmentation/data/event_detection"
 downsample_r = 5
 
 nwb_path = sys.argv[1]
