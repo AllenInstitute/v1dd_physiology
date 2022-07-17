@@ -32,6 +32,9 @@ for nwb_i, nwb_p in enumerate(nwb_paths):
 
     nwb_f = h5py.File(nwb_p, 'a')
 
+    if 'roi_classification_pika' in nwb_f['analysis']:
+        del nwb_f['analysis/roi_classification_pika']
+
     pika_grp = nwb_f['analysis'].create_group('roi_classification_pika')
     pika_grp.attrs['description'] = '''This group stores the results from 
     a neural network classifier trained by team Pika. The classifier predicts 

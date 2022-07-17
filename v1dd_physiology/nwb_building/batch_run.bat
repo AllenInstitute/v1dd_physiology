@@ -8,7 +8,6 @@ python 0050_add_sync.py
 python 0060_add_vasmap.py
 python 0100_add_eyetracking.py
 python 0110_add_running.py
-python 0140_add_drifting_grating_location.py
 python 0150_add_stimulus_table.py
 python 0160_add_lsn_onset.py
 python 0170_add_dgc_onset_windowed.py
