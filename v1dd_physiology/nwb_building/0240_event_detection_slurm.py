@@ -18,7 +18,8 @@ l0 = SourceFileLoader(
     '/allen/programs/braintv/workgroups'
     '/cortexmodels/peterl/forward_model/l0_analysis_deepscope.py').load_module()
 
-output_dir = '/allen/programs/mindscope/workgroups/surround/jun_testing/event_detection'
+output_dir = '/allen/programs/mindscope/workgroups/surround' \
+             '/v1dd_in_vivo_new_segmentation/data/event_detection'
 
 curr_folder = os.path.dirname(os.path.realpath(__file__))
 os.chdir(curr_folder)
